@@ -1,0 +1,50 @@
+/* main {
+    display: flex;
+    gap: 20px;
+} */
+
+/* 🎮 Sidebar */
+main aside {
+    flex-basis: 20%;
+    background: linear-gradient(to bottom, #fce4ec, #f8bbd0);
+    padding: 20px;
+    border-right: 3px solid #ec407a;
+    border-radius: 10px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+/* 🎲 Dice area */
+#dice {
+    width: 80px;
+    height: 80px;
+    background-color: #fff;
+    border: 3px solid #ec407a;
+    border-radius: 10px;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #d81b60;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+#dice:hover {
+    transform: scale(1.1);
+    background-color: #fce4ec;
+}
+
+/* Future elements */
+aside .playerTurnInfo {
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+    color: #880e4f;
+}

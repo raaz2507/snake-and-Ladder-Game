@@ -1,0 +1,21 @@
+header{
+        width:90%;
+        margin:0 auto;
+}
+header {
+    
+    text-align: center;
+    background: linear-gradient(45deg, #4caf50, #81c784);
+    color: white;
+    font-size: 3rem;
+    font-weight: bold;
+    padding: 20px 0;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+    letter-spacing: 3px;
+    border-bottom: 5px solid #2e7d329d;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}

@@ -1,0 +1,114 @@
+#bord {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    width: 90vh;
+    height: 90vh;
+    margin: 20px auto;
+    border: 2px solid #2e7d32;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+    background-color: #f1f8e9;
+    position: relative;
+}
+
+#bord .box {
+    border: 1px solid #c8e6c9;
+    font-size: 1.5rem;
+    font-weight: bold;
+    /* aspect-ratio: 1; */
+    user-select: none;
+    position: relative;
+}
+
+.snakeImg {
+    position: absolute;
+    pointer-events: none;
+    z-index: 2;
+    transform-origin: 0 50%; /* Left-center anchor */
+}
+
+
+/* #bord {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    width: 90vh;
+    height: 90vh;
+    margin: 20px auto;
+    border: 5px solid #2e7d32;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+    background-color: #f1f8e9;
+    position: relative;
+}
+
+#bord .box {
+    border: 1px solid #c8e6c9;
+    font-size: 1.5rem;
+    font-weight: bold;
+    aspect-ratio: 1;
+    user-select: none;
+    position: relative;
+    transition: transform 0.2s;
+} */
+
+/* 🟥 Alternate box color (chess-style) */
+#bord .box:nth-child(odd) {
+    background-color: #e8f5e9;
+}
+#bord .box:nth-child(even) {
+    background-color: #c8e6c9;
+}
+
+/* 🖱️ On hover effect */
+#bord .box:hover {
+    transform: scale(1.05);
+    z-index: 2;
+    background-color: #a5d6a7;
+    color: white;
+    cursor: pointer;
+}
+
+.token {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    font-size: 1.2rem;
+}
+
+
+.box.snake {
+    background-color: #f8bbd0; /* light pink */
+    color: #880e4f;
+    font-weight: bold;
+    position: relative;
+}
+.box.ladder {
+    background-color: #c8e6c9; /* light green */
+    color: #1b5e20;
+    font-weight: bold;
+    position: relative;
+}
+.box.snake::after,
+.box.ladder::after {
+    content: attr(data-info);
+    position: absolute;
+    font-size: 10px;
+    background: #000;
+    color: #fff;
+    padding: 2px 5px;
+    border-radius: 4px;
+    top: 0;
+    right: 0;
+}
+
+ /*flex setting start */
+  
+   
+    
+
+   
+    /* flex setting end */
+@media only screen and (orientation: portrait){
+  
+}
+

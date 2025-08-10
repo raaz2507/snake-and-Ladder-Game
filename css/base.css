@@ -1,0 +1,25 @@
+body, html{
+        width:100%;
+        height:100%;
+}
+
+*{
+    padding:0;
+    margin:0;
+    box-sizing: border-box;
+    /* border : 1px solid red; */
+}
+body{
+    background: url('../img/back2.svg') fixed;
+    background-size: 400px 400px;
+    position: relative;
+}
+body .blur{
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top:0;
+    left:0;
+    backdrop-filter: blur(3px);
+    z-index: -1;
+}
