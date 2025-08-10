@@ -51,7 +51,7 @@
         </aside>
         <div id="bord"></div>
     </main>
-    <footer>&copy; Snake and Leader Game | Made with ❤️ for Rashi</footer>
+    <footer>&copy; Snake and Leader Game | Made with <a href="./img/cupple.gif" target="_blank">❤️ for Rashi.</a> </footer>
     <script src="./js/script.js"></script></script>
    
 <script>
@@ -62,24 +62,28 @@
     });
     document.addEventListener("DOMContentLoaded", ()=>{
         new gameDashbord();
-
-        // Example: Snake 98 → 78
-        addSnakeImage(40, 59, './img/Ladder.png');
-        addSnakeImage(62, 19, './img/snake.png');
-        addSnakeImage(25, 5, './img/snake.png');
-
-        // Ladder example
-        addSnakeImage(4, 14, './img/Ladder.png'); // same function but ladder image
+        loadLeadder_onBord();
+        loadSnaks_onBord();
     });
+
     window.addEventListener('resize', () => {
         document.querySelectorAll('.snakeImg').forEach(el => el.remove()); // पुरानी images हटाओ
-        // फिर दोबारा snake images add करो
-        addSnakeImage(40, 59, './img/Ladder.png');
-        // addSnakeImage(98, 78, './img/snake1.png');
-        // addSnakeImage(62, 19, './img/snake2.png');
-        // addSnakeImage(25, 5, './img/snake3.png');
-        addSnakeImage(4, 14, './img/Ladder.png'); // same function but ladder image
+        loadLeadder_onBord();
+        loadSnaks_onBord();
     });
+
+    function loadLeadder_onBord(){
+        addSnakeImage(40, 59, './img/Ladder.png');
+        addSnakeImage(4, 14, './img/Ladder.png'); // same function but ladder image
+    }
+
+    function loadSnaks_onBord(){
+        // Example: Snake 98 → 78
+        // फिर दोबारा snake images add करो
+        addSnakeImage(62, 19, './img/snake.png');
+        addSnakeImage(25, 5, './img/snake.png');
+        addSnakeImage(98, 78, './img/snake.png');
+    }
 
     function addSnakeImage(start, end, imgUrl) {
         const snakeImg = document.createElement('img');
