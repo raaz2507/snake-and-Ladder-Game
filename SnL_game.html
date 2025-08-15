@@ -7,41 +7,13 @@
 </head>
 <link rel="stylesheet" href="./css/style.css">
 <style>
-    main{
-        width:90%;
-        height: max-content;
-        margin: 0 auto;
-    }
+    
 
-    main aside{
-        border: 1px solid red;
-    }
-    main #bord{
-        /* width:90vh;
-        height: 90vh; */
-        margin:5px auto;
-    }
-     /* flex setting start */
-   
-    main{
-        display: flex;
-        
-    }
-    main aside{
-        flex-basis: 20%;
-    }
-    main #bord{
-        flex-basis: 90vh;
-    }
-    #bord .box{
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+    
 </style>
 <body>
     <div class="blur"></div>
-    <header>Snake and Leader</header>
+    <!-- <header>Snake and Leader</header> -->
     <main>
         <aside>
             <div id="dice">🎲</div>
@@ -51,108 +23,18 @@
         </aside>
         <div id="bord"></div>
     </main>
-    <footer>&copy; Snake and Leader Game | Made with <a href="./img/cupple.gif" target="_blank">❤️ for Rashi.</a> </footer>
+    <!-- <footer>&copy; Snake and Leader Game | Made with <a href="./img/cupple.gif" target="_blank">❤️</a> for Rashi. </footer> -->
     <script src="./js/script.js"></script></script>
    
 <script>
-     document.addEventListener("click", function(event) {
+    document.addEventListener("click", function(event) {
         let x = event.clientX; // screen me horizontal position
         let y = event.clientY; // screen me vertical position
         console.log("X: " + x + ", Y: " + y);
     });
     document.addEventListener("DOMContentLoaded", ()=>{
         new gameDashbord();
-        loadLeadder_onBord();
-        loadSnaks_onBord();
     });
-
-    window.addEventListener('resize', () => {
-        document.querySelectorAll('.snakeImg').forEach(el => el.remove()); // पुरानी images हटाओ
-        loadLeadder_onBord();
-        loadSnaks_onBord();
-    });
-
-    function loadLeadder_onBord(){
-        addSnakeImage(40, 59, './img/Ladder.png');
-        addSnakeImage(4, 14, './img/Ladder.png'); // same function but ladder image
-    }
-
-    function loadSnaks_onBord(){
-        // Example: Snake 98 → 78
-        // फिर दोबारा snake images add करो
-        addSnakeImage(62, 19, './img/snake.png');
-        addSnakeImage(25, 5, './img/snake.png');
-        addSnakeImage(98, 78, './img/snake.png');
-    }
-
-    function addSnakeImage(start, end, imgUrl) {
-        const snakeImg = document.createElement('img');
-        snakeImg.src = imgUrl;
-        snakeImg.classList.add('snakeImg');
-
-        const startCenter = getBoxCenter(start);
-        const endCenter = getBoxCenter(end);
-
-        const bord = document.getElementById('bord');
-        bord.appendChild(snakeImg);
-
-        // Board का pixel size लेना (क्योंकि हमें pixels में exact fit करना है)
-        const boardRect = bord.getBoundingClientRect();
-        const boardW = boardRect.width;
-        const boardH = boardRect.height;
-
-        // Start/end के pixel coordinate
-        const startX = (startCenter.left / 100) * boardW;
-        const startY = (startCenter.top / 100) * boardH;
-        const endX = (endCenter.left / 100) * boardW;
-        const endY = (endCenter.top / 100) * boardH;
-
-        // Distance और angle निकालना
-        const dx = endX - startX;
-        const dy = endY - startY;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        const angle = Math.atan2(dy, dx);
-
-        // Snake image को place करना (top-left को center से adjust)
-        snakeImg.style.width = distance + "px";
-        snakeImg.style.height = "auto";
-        snakeImg.style.position = "absolute";
-        console.log(startX, startY);
-        snakeImg.style.top = startY + "px";
-        snakeImg.style.left = startX + "px";
-        snakeImg.style.transformOrigin = "0 50%"; // left-center point
-        snakeImg.style.transform = `rotate(${angle}rad)`;
-    }
-
-
-    function getBoxPosition(num) {
-        const row = Math.floor((num - 1) / 10);
-        const col = (row % 2 === 0) 
-            ? (num - 1) % 10 
-            : 9 - ((num - 1) % 10);
-
-        // top-left coordinate (percentage)
-        const cellSize = 100 / 10; // 10 columns
-        return {
-            top: (9 - row) * cellSize + '%', // 9-row => because 100 starts from bottom
-            left: col * cellSize + '%'
-        };
-    }
-    function getBoxCenter(num) {
-        const row = Math.floor((num - 1) / 10);
-        const col = (row % 2 === 0) 
-            ? (num - 1) % 10 
-            : 9 - ((num - 1) % 10);
-
-        const cellSize = 100 / 10; // 10 columns
-
-        return {
-            top: (9 - row) * cellSize + cellSize / 2, // center Y
-            left: col * cellSize + cellSize / 2       // center X
-        };
-    }
-
-
 </script>
 </body>
 </html>

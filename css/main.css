@@ -1,0 +1,25 @@
+@import url('aside.css');
+@import url('bord.css');
+
+main{
+    width:90%;
+    height: max-content;
+    margin: 0 auto;
+    padding: 10px 0;
+}
+/* flex setting start */
+   
+main{
+    display: flex;
+}
+
+main aside{
+    flex-basis: 20%;
+}
+
+main #bord{
+    flex-basis: 90vh;
+}
+
+/* flex setting end */
+

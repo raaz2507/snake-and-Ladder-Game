@@ -4,7 +4,7 @@
 } */
 
 /* 🎮 Sidebar */
-main aside {
+aside {
     flex-basis: 20%;
     background: linear-gradient(to bottom, #fce4ec, #f8bbd0);
     padding: 20px;
@@ -19,7 +19,7 @@ main aside {
 }
 
 /* 🎲 Dice area */
-#dice {
+aside #dice {
     width: 80px;
     height: 80px;
     background-color: #fff;
@@ -36,7 +36,7 @@ main aside {
     transition: transform 0.2s;
 }
 
-#dice:hover {
+aside #dice:hover {
     transform: scale(1.1);
     background-color: #fce4ec;
 }
