@@ -7,23 +7,29 @@
 </head>
 <link rel="stylesheet" href="./css/style.css">
 <style>
-    
+    #toggleScreenBtn{
+        width:2rem;
+        height: 2rem;
+    }
 
     
 </style>
 <body>
     <div class="blur"></div>
-    <!-- <header>Snake and Leader</header> -->
+    <header>Snake and Leader</header>
     <main>
         <aside>
             <div id="dice">🎲</div>
             <p>Tap to Roll Dice</p>
             <div class="playerTurnInfo">Player 1's Turn</div>
             <!-- <img src="./img/cupple.gif" alt="" srcset=""> -->
+             <button id="toggleScreenBtn" onclick="toggleScreen()">
+                <img src="./img/expand-solid-full.svg" alt="exend" title="Full Screen" id="toggleScreenBtnImg">
+             </button>
         </aside>
         <div id="bord"></div>
     </main>
-    <!-- <footer>&copy; Snake and Leader Game | Made with <a href="./img/cupple.gif" target="_blank">❤️</a> for Rashi. </footer> -->
+    <footer>&copy; Snake and Leader Game | Made with <a href="./img/cupple.gif" target="_blank">❤️</a> for Rashi. </footer>
     <script src="./js/script.js"></script></script>
    
 <script>
@@ -35,6 +41,21 @@
     document.addEventListener("DOMContentLoaded", ()=>{
         new gameDashbord();
     });
+    function toggleScreen() {
+        const header = document.getElementsByTagName('header')[0];
+        const footer = document.getElementsByTagName('footer')[0];
+        const toggleBtnImg = document.getElementById('toggleScreenBtnImg');
+        if (header.classList.contains('hide')){
+            header.classList.remove('hide');
+            footer.classList.remove('hide');
+            toggleBtnImg.src = "./img/expand-solid-full.svg";
+        }else{
+            header.classList.add('hide');
+            footer.classList.add('hide');
+            toggleBtnImg.src = "./img/compress-solid-full.svg";
+        }
+       
+    }
 </script>
 </body>
 </html>
