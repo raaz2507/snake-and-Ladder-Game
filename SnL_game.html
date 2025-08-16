@@ -7,11 +7,24 @@
 </head>
 <link rel="stylesheet" href="./css/style.css">
 <style>
-    #toggleScreenBtn{
-        width:2rem;
-        height: 2rem;
+    .diceBlock{
+        width:100%;
+        height: 100%;
+        /* border: 1px solid red; */
+        padding: 1rem;
+        /* text-align: center; */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
     }
-
+.player{
+    position: absolute;
+    width:3vmin;
+    height: 3vmin;
+    z-index: 6;
+}
     
 </style>
 <body>
@@ -19,13 +32,31 @@
     <header>Snake and Leader</header>
     <main>
         <aside>
-            <div id="dice">🎲</div>
-            <p>Tap to Roll Dice</p>
-            <div class="playerTurnInfo">Player 1's Turn</div>
-            <!-- <img src="./img/cupple.gif" alt="" srcset=""> -->
-             <button id="toggleScreenBtn" onclick="toggleScreen()">
+            <p>Enter Full Screen</p>
+            <button id="toggleScreenBtn">
+                
                 <img src="./img/expand-solid-full.svg" alt="exend" title="Full Screen" id="toggleScreenBtnImg">
              </button>
+            <label for="diceToggleBtn" class="switch" >
+                <input type="checkbox" name="" id="diceToggleBtn" aria-checked="false" checked>
+                <div class="switch-btn"></div>
+            </label>
+            <div class="diceBlock">
+                <div id="dice" >🎲</div>
+                <p id="diceInstructions">Tap to Roll Dice</p>
+                <div id="manualDiceRoll" class="hide">
+                    <button value="1">1</button>
+                    <button value="2">2</button>
+                    <button value="3">3</button>
+                    <button value="4">4</button>
+                    <button value="5">5</button>
+                    <button value="6">6</button>
+                </div>
+            </div>
+
+            <div class="playerTurnInfo">Player 1's Turn</div>
+            <!-- <img src="./img/cupple.gif" alt="" srcset=""> -->
+             
         </aside>
         <div id="bord"></div>
     </main>
@@ -33,29 +64,14 @@
     <script src="./js/script.js"></script></script>
    
 <script>
-    document.addEventListener("click", function(event) {
-        let x = event.clientX; // screen me horizontal position
-        let y = event.clientY; // screen me vertical position
-        console.log("X: " + x + ", Y: " + y);
-    });
     document.addEventListener("DOMContentLoaded", ()=>{
         new gameDashbord();
     });
-    function toggleScreen() {
-        const header = document.getElementsByTagName('header')[0];
-        const footer = document.getElementsByTagName('footer')[0];
-        const toggleBtnImg = document.getElementById('toggleScreenBtnImg');
-        if (header.classList.contains('hide')){
-            header.classList.remove('hide');
-            footer.classList.remove('hide');
-            toggleBtnImg.src = "./img/expand-solid-full.svg";
-        }else{
-            header.classList.add('hide');
-            footer.classList.add('hide');
-            toggleBtnImg.src = "./img/compress-solid-full.svg";
-        }
-       
-    }
+    //  document.addEventListener("click", function(event) {
+    //     let x = event.clientX; // screen me horizontal position
+    //     let y = event.clientY; // screen me vertical position
+    //     console.log("X: " + x + ", Y: " + y);
+    // });
 </script>
 </body>
 </html>

@@ -18,26 +18,135 @@ aside {
     gap: 20px;
 }
 
-/* 🎲 Dice area */
-aside #dice {
-    width: 80px;
-    height: 80px;
-    background-color: #fff;
-    border: 3px solid #ec407a;
-    border-radius: 10px;
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #d81b60;
-    
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    transition: transform 0.2s;
-}
+/* 🎲 Dice area  start*/
+  #dice {
+      width:5rem;
+      height: 5rem;
+      display: inline-block;
+      font-size: 5rem;
+      font-weight: bold;
+      color: #d81b60;
+      /* box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1); */
+      /* background-color: #fff; */
+      /* border: 3px solid #ec407a; */
+      /* border-radius: 10px; */
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      /* flex setting */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-aside #dice:hover {
-    transform: scale(1.1);
-    background-color: #fce4ec;
-}
+  aside #dice:hover {
+      transform: scale(1.1);
+      /* background-color: #fce4ec; */
+  }
+/* dice area End */
+
+
+/* manualy Dice Role start */
+  #manualDiceRoll{
+    border: 1px solid red;
+    padding: 6px;
+    border-radius: 10px;
+    /* flex setting */
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 5px;
+    background-color: rgba(245, 245, 245, 0.7);
+   }
+   #manualDiceRoll button{
+    width: 4rem;
+    height: 4rem;
+    font-size: 2rem;
+    background-color: hsla(0, 0%, 96%, 0.5);
+    border-radius: 10px;
+    transition: background .02s ease;
+   }
+   #manualDiceRoll button:active{
+    background-color: rgb(43, 255, 0);
+   }
+
+/* manualy Dice Role end */
+
+
+/* btn styling start */
+  .switch{
+    cursor: pointer;
+  }
+  .switch-btn{
+    content: '🎲';
+    width:6rem;
+    height: 3rem;
+    background-color: #de3f3f;
+    position: relative;
+    /* cursor: pointer; */
+    border-radius: 2rem;
+    box-shadow: inset 0 10px 10px rgba(0,0,0,0.3);
+    transition: background-color 0.3s ease;
+  }
+  .switch-btn:before{
+    content: "";
+    position: absolute;
+    height: 2.6rem;
+    width:2.6rem;
+    background: linear-gradient(#FFF, #cdcdcd);
+    left: 0.2rem;
+    top: 0.2rem;
+    /* transition: all 0.3s ease; */
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    transform: translateX(0);
+      /* transform: scale(0.9); */
+    border-radius: 50%;
+    box-shadow: 0 8px 6px -4px rgba(0,0,0, 0.25);
+  }
+  input[type=checkbox] {
+      /* display: none; */
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+  }
+  input[type=checkbox]:checked + .switch-btn:before{
+      /* left:4.2rem; */
+      transform: translateX(3rem);
+      /* background: linear-gradient(135deg, #47CB8F, #2ecc71); */
+      box-shadow: 0 0 8px #47CB8F;
+  }
+  input[type=checkbox]:checked + .switch-btn{
+      background-color: #47CB8F; 
+      /* #64ff64; */
+  }
+  /* input[type=checkbox]:focus + .switch-btn{
+      box-shadow: 0 0 0 3px rgba(71,203,143,0.5);
+  } */
+  .switch-btn::after{
+    content: "🎲";   /* default */
+    position: absolute;
+    right: 0.2rem;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #666;
+    pointer-events: none;
+    transition: color 0.3s ease, content 0.2s ease;
+  }
+
+  input[type=checkbox]:checked + .switch-btn::after {
+    content: "🛢️";
+    color: white;
+    transform: translate(40%, -50%);
+    left:0.2rem;
+    right: auto;  
+  }
+/* btn styling end  */
+
+
+
 
 /* Future elements */
 aside .playerTurnInfo {
@@ -46,17 +155,20 @@ aside .playerTurnInfo {
     text-align: center;
     color: #880e4f;
 }
-
+aside #toggleScreenBtn{
+    width: 3rem;
+    height: 3rem;
+}
 /* flex setting start */
 aside{
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
 }
 /* flex setting end */
 @media only screen and (orientation: portrait){
   aside{
-    display: flex;
-    flex-direction: row;
+    /* flex-direction: row; */
   }
 }
