@@ -1,10 +1,16 @@
+:root{
+    --bordSize : 95vmin; /* vmin = min(vw, vh) */
+}
 #bord {
     display: grid;
     grid-template-columns: repeat(10, 1fr);
     grid-template-rows: repeat(10, 1fr);
-    width: 90vh;
-    height: 90vh;
-    margin: 0px auto;
+    /* width: min(90vw, 90vh);
+    height: min(90vw, 90vh); */
+    width: var(--bordSize);
+    height: var(--bordSize);
+    /* aspect-ratio: 1; */
+    /* margin: 0px auto; */
     border: 2px solid #2e7d32;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
     /* background-color: #f1f8e9; */
@@ -23,20 +29,11 @@
 #bord .box {
     border: 1px solid #c8e6c9;
     font-size: 2.2vh;
-    font-weight: bold;
-    /* aspect-ratio: 1; */
+    /* font-weight: bold; */
+    aspect-ratio: 1;
     user-select: none;
     /* position: relative; */
     transition: transform 0.2s;
-}
-
-
-.snakeImg, .leaderImg {
-    border:1px solid red;
-    position: absolute;
-    pointer-events: none;
-    z-index: 2;
-    transform-origin: center left; /* Left-center anchor */
 }
 
 
@@ -56,14 +53,6 @@
     color: white;
     cursor: pointer;
 }
-
-.token {
-    position: absolute;
-    bottom: 5px;
-    right: 5px;
-    font-size: 1.2rem;
-}
-
 
 .box.snake {
     background-color: #f8bbd0; /* light pink */
@@ -85,12 +74,25 @@
     background: #000;
     color: #fff;
     padding: 2px 5px;
-    border-radius: 4px;
+    border-radius: 4px ;
     top: 0;
     right: 0;
 }
 
+.snakeImg, .leaderImg {
+    border:1px solid red;
+    position: absolute;
+    pointer-events: none;
+    z-index: 2;
+    transform-origin: center left; /* Left-center anchor */
+}
 
+.token {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    font-size: 1.2rem;
+}
 @media only screen and (orientation: portrait){
   
 }

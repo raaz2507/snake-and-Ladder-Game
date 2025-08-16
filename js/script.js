@@ -40,7 +40,6 @@ class gameDashbord{
             this.#BoxCenterList[`${ box.dataset.box_num}`]= {x:X, y: Y};
             // console.log(this.#BoxCenterList[`${ box.dataset.box_num}`]);
 
-
         });
 
         // console.log(this.#BoxCenterList);

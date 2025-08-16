@@ -11,6 +11,10 @@ main{
    
 main{
     display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 1rem;
 }
 
 main aside{
@@ -18,8 +22,22 @@ main aside{
 }
 
 main #bord{
-    flex-basis: 90vh;
+    /* flex-basis: 90vh; */
 }
-
+.hide{
+    display: none;
+}
 /* flex setting end */
+@media only screen and (orientation: portrait){
+    main{
+        flex-direction: column;
+    }
+    main aside{
+        order:1;
+    }
+
+    main #bord{
+        order:0;
+    }
+}
 
