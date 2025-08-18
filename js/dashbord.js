@@ -133,23 +133,13 @@ export class gameDashbord{
     
     #CreatePlayer(){
         const {bord} =this.#elemts;
-        this.#players['1']={playerName:"khushi", canvas: null, pos:0, charecterID:1 };
+        
         
         this.#players['1'].canvas=createPlayerObj();
 
         console.log(this.#players[1]);
         trycanvs(this.#players['1'].canvas);
-        function trycanvs(canvas){
-            const ctx = canvas.getContext('2d');
-            // कुछ ड्रॉ करके देखें
-            ctx.fillStyle = '#4caf50';
-            ctx.fillRect(50, 50, 150, 100);
-
-            ctx.beginPath();
-            ctx.arc(320, 200, 60, 0, Math.PI * 2);
-            ctx.fillStyle = '#ff7043';
-            ctx.fill();
-        }
+        
         function createPlayerObj(){
             const canvas = document.createElement('canvas');
             canvas.width= 100;
@@ -179,33 +169,7 @@ export class gameDashbord{
         }
     }
 
-    // #rollDice(){
-    //     const diceFaces = ["⚀","⚁","⚂","⚃","⚄","⚅"];
-        
-    //     let count = 0;
-    //     let speed = 80; // शुरू में तेज
-    //     const maxRolls = 15; // कितनी बार face बदलेगा
-
-    //     const interval = setInterval(() => {
-    //         let newIndex;
-    //         do {
-    //             newIndex = Math.floor(Math.random() * diceFaces.length);
-    //         } while (newIndex === this.#lastDiceFace);
-
-    //         this.#lastDiceFace = newIndex;
-    //         dice.textContent = diceFaces[newIndex];
-    //         dice.style.transform = `rotate(${count * 90}deg)`; // घूमने का illusion
-
-    //         count++;
-    //         speed += 10; // धीरे-धीरे slow down
-
-    //         if (count >= maxRolls) {
-    //             clearInterval(interval);
-    //         }
-    //     }, speed);
-        
-    // }
-
+   
     #createBord(){
         const {bord}=this.#elemts;
         const {snakes: snakeList, ladders: laddersList}= this.#snakeLaddersPositionData;
@@ -408,3 +372,30 @@ export class gameDashbord{
         };
     }
 }
+
+ // #rollDice(){
+    //     const diceFaces = ["⚀","⚁","⚂","⚃","⚄","⚅"];
+        
+    //     let count = 0;
+    //     let speed = 80; // शुरू में तेज
+    //     const maxRolls = 15; // कितनी बार face बदलेगा
+
+    //     const interval = setInterval(() => {
+    //         let newIndex;
+    //         do {
+    //             newIndex = Math.floor(Math.random() * diceFaces.length);
+    //         } while (newIndex === this.#lastDiceFace);
+
+    //         this.#lastDiceFace = newIndex;
+    //         dice.textContent = diceFaces[newIndex];
+    //         dice.style.transform = `rotate(${count * 90}deg)`; // घूमने का illusion
+
+    //         count++;
+    //         speed += 10; // धीरे-धीरे slow down
+
+    //         if (count >= maxRolls) {
+    //             clearInterval(interval);
+    //         }
+    //     }, speed);
+        
+    // }
