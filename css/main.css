@@ -21,9 +21,7 @@ main aside{
     flex-basis: 20%;
 }
 
-main #bord{
-    /* flex-basis: 90vh; */
-}
+/* main #bord{ flex-basis: 90vh;} */
 .hide{
     display: none !important;
 }

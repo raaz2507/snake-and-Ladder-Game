@@ -30,7 +30,7 @@
     border: 1px solid #c8e6c9;
     font-size: 2.2vh;
     /* font-weight: bold; */
-    aspect-ratio: 1;
+    /* aspect-ratio: 1; */
     user-select: none;
     /* position: relative; */
     transition: transform 0.2s;
@@ -48,7 +48,7 @@
 /* 🖱️ On hover effect */
 #bord .box:hover {
     transform: scale(1.05);
-    z-index: 2;
+    z-index: 1;
     background-color: #a5d6a7;
     color: white;
     cursor: pointer;

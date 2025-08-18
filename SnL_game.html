@@ -42,8 +42,19 @@
                 <div class="switch-btn"></div>
             </label>
             <div class="diceBlock">
-                <div id="dice" >🎲</div>
+                <!-- <div id="dice" >🎲</div> -->
                 <p id="diceInstructions">Tap to Roll Dice</p>
+                <div class="dice_container">
+                    <div class="dice">
+                        <div class="face front"></div>
+                        <div class="face back"></div>
+                        <div class="face top"></div>
+                        <div class="face bottom"></div>
+                        <div class="face right"></div>
+                        <div class="face left"></div>
+                    </div>
+                </div>
+                
                 <div id="manualDiceRoll" class="hide">
                     <button value="1">1</button>
                     <button value="2">2</button>
@@ -56,17 +67,43 @@
 
             <div class="playerTurnInfo">Player 1's Turn</div>
             <!-- <img src="./img/cupple.gif" alt="" srcset=""> -->
-             
+             <button id="startNewGameBtn">Start New Game</button>
         </aside>
         <div id="bord"></div>
     </main>
     <footer>&copy; Snake and Leader Game | Made with <a href="./img/cupple.gif" target="_blank">❤️</a> for Rashi. </footer>
-    <script src="./js/script.js"></script></script>
-   
+
+
+    <!-- pop up box start  -->
+ <div id="newPlayerCard" class="hide">
+        <!-- player Count container -->
+
+        <div id="playerCount_container" class="player-container_base">
+            <form action="" name="playerCountForm" method="GET">
+                <label for="player_count" class='player_count_label'>Select Players</label>
+                <div id="player_countDis">Players: 1</div>
+                <input type="range" id="player_count" min="1" max="4" step="1" value="1" list="tickmarks">
+                
+                <datalist id="tickmarks">
+                    <option value="1" label="1"></option>
+                    <option value="2" label="2"></option>
+                    <option value="3" label="3"></option>
+                    <option value="4" label="4"></option>
+                </datalist>
+                <button type="submit">Go...</button>
+            </form>
+        </div>
+
+        <!-- player Avater container -->
+        <div id="playerAvtar_container" class="player-container_base  hide"></div>
+
+    </div>
+
+<!-- pop up box end  -->
+
+<script type="module" src="./js/script.js"></script></script>   
 <script>
-    document.addEventListener("DOMContentLoaded", ()=>{
-        new gameDashbord();
-    });
+   
     //  document.addEventListener("click", function(event) {
     //     let x = event.clientX; // screen me horizontal position
     //     let y = event.clientY; // screen me vertical position
@@ -75,3 +112,39 @@
 </script>
 </body>
 </html>
+
+
+
+<!-- <form action="" name="player_avatarForm" method="GET">
+                <label for="playerName" class="playerNameLabel">Enter Player Name </label>
+                <input type="text" name="playerName" id="playerName" placeholder="palyer_1" value="player_1">
+            
+                <label for="chouseAvtar">Chouse Character for your player</label>
+                <div class="avatar-options">
+                -->             
+                    <!-- Avatar 1 -->
+                    <!-- <input type="radio" id="avatar1" name="player_avatar" value="avatar1" >
+                    <label for="avatar1">
+                    <canvas id="canvas1" width="256" height="256"></canvas>
+                    </label> -->
+
+                    <!-- Avatar 2 -->
+                    <!-- <input type="radio" id="avatar2" name="player_avatar" value="avatar2" checked>
+                    <label for="avatar2">
+                    <canvas id="canvas2" width="256" height="256"></canvas>
+                    </label> -->
+
+                    <!-- Avatar 3 -->
+                    <!-- <input type="radio" id="avatar3" name="player_avatar" value="avatar3">
+                    <label for="avatar3">
+                    <canvas id="canvas3" width="256" height="256"></canvas>
+                    </label> -->
+                    <!-- Avatar 4 -->
+                    <!-- <input type="radio" id="avatar4" name="player_avatar" value="avatar4">
+                    <label for="avatar4">
+                    <canvas id="canvas4" width="256" height="256"></canvas>
+                    </label> 
+                   
+                </div>
+                <button type="submit">Start....</button>
+            </form> -->
