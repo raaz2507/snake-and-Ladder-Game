@@ -18,7 +18,7 @@ export class gameDashbord{
         ]
     };
     #lastDiceFace =-1;
-    #players= {1:{playerName:"khushi", pos:0, avatar:1 },};
+    #players = {}; //= {1:{playerName:"khushi", pos:0, avatar:1, canvas:null },};
     #totalPlayers=0;
     #charAvatar={1: {canvasId:"canvas1", file:"./img/pngegg.png", frameWidth: 256, frameHeight: 256, totalFrames:6},
                 2: {canvasId:"canvas2", file:"./img/pngegg.png", frameWidth: 256, frameHeight: 256, totalFrames:6},
@@ -32,7 +32,8 @@ export class gameDashbord{
         this.#setEvents();
         // this.#getBoxCenter();
         this.#loadSnaksLadders_onBord();
-        this.#CreatePlayer();
+        this.#players= this.#getPlayerData();
+        this.#loadPlayerOnBord();
     }
 
     #getElements(){
@@ -46,7 +47,6 @@ export class gameDashbord{
         this.#elemts['manualDiceRoll'] = document.getElementById('manualDiceRoll');
 
         this.#elemts['diceToggleBtn'] = document.getElementById('diceToggleBtn');
-
 
 
         /* pop box elemts*/
@@ -74,6 +74,7 @@ export class gameDashbord{
         
         dice.addEventListener("click",()=>{
             this.#lastDiceFace = diceObj.RollDice();
+            this.#movePlayer(1, this.#lastDiceFace);
             // this.#rollDice();
         });
         
@@ -99,8 +100,6 @@ export class gameDashbord{
             }
         });
 
-      
-
 
         /*pop up events*/
         const { startNewGameBtn, newPlayerCard } = this.#elemts;
@@ -108,6 +107,7 @@ export class gameDashbord{
         const { playerCountForm, player_avatarForm } = this.#elemts;
 
         startNewGameBtn.addEventListener('click', ()=>{
+            this.#resetNewPlayerCard();
             newPlayerCard.classList.remove('hide');                
         });
         newPlayerCard.addEventListener('click', ( event )=>{
@@ -123,36 +123,175 @@ export class gameDashbord{
         playerCountForm.addEventListener('submit', (event)=>{
             event.preventDefault(); // page reload rokne ke liye
             const count = event.target.player_count.value;
-            console.log(count);
+            // console.log(count);
             this.#totalPlayers = count;
             playerCount_container.classList.add('hide');
             
             this.#genratePlayerForm();
         }); 
     }
-    
-    #CreatePlayer(){
-        const {bord} =this.#elemts;
-        
-        
-        this.#players['1'].canvas=createPlayerObj();
-
-        console.log(this.#players[1]);
-        trycanvs(this.#players['1'].canvas);
-        
-        function createPlayerObj(){
-            const canvas = document.createElement('canvas');
-            canvas.width= 100;
-            canvas.height=100;
-            canvas.style.position = 'absolute';
-            canvas.style.bottom = 20+ 'px';
-            canvas.style.left = 20 + 'px';
-
-            canvas.classList.add('player');
-            bord.appendChild(canvas);
-            return canvas;
+    #storePlayerData(){
+        localStorage.setItem('playersData', JSON.stringify(this.#players));
+    }
+    #getPlayerData(){
+        const data = JSON.parse( localStorage.getItem('playersData') ) || {};
+        console.log(data);
+        return data;
+    }
+/* player movement code start*/ 
+    #loadPlayerOnBord(){
+        for (const [pid] of Object.keys(this.#players)){
+            this.#spawnPlayer(pid);
         }
     }
+    #resetGame(){
+        // this.#players={};
+        this.#storePlayerData();
+    }
+    #resetNewPlayerCard(){
+        playerAvtar_container.innerHTML=""
+        playerAvtar_container.classList.add('hide');
+        playerCount_container.classList.remove('hide');
+    }
+    #spawnPlayer(playerId) {
+        const { bord } = this.#elemts;
+        const player = this.#players[playerId];
+        const avatar = this.#charAvatar[player.avatar];
+
+        console.log(this.#charAvatar[player.avatar]);
+
+        const canvas = document.createElement('canvas');
+        canvas.width = this.#charAvatar[player.avatar].frameWidth ;
+        canvas.height = this.#charAvatar[player.avatar].frameHeight;
+       
+        canvas.style.position = 'absolute';
+        canvas.style.transition = "all 0.5s linear"; // smooth move
+
+        canvas.classList.add('player');
+        canvas.dataset.playerId = playerId;
+        canvas.dataset.playerName =  this.#players[playerId].playerName;
+
+        bord.appendChild(canvas);
+        // document.body.appendChild(canvas);
+
+        this.#players[playerId].canvas = canvas;
+        this.#players[playerId].pos = 0;
+
+        // यहां avatar sprite animation apply करो
+        this.#applySpriteAnimation(canvas, avatar.file, avatar.file, avatar.frameWidth, avatar.frameHeight, avatar.totalFrames);
+
+        this.#updatePlayerPosition(playerId);
+    }
+    #movePlayer(playerId, steps) {
+        const player = this.#players[playerId];
+        let targetPos = player.pos + steps;
+        if (targetPos > 100) targetPos = 100;
+
+        let currentPos = player.pos;
+        const canvas = player.canvas;
+
+        // चलते वक्त animation ON
+        canvas.startWalk();
+
+        const walkInterval = setInterval(() => {
+            currentPos++;
+            player.pos = currentPos;
+            this.#updatePlayerPosition(playerId);
+
+            if (currentPos === targetPos) {
+                clearInterval(walkInterval);
+
+                // Snake/Ladder check
+                const { snakes, ladders } = this.#snakeLaddersPositionData;
+                snakes.forEach(s => { if (s.start === currentPos) player.pos = s.end; });
+                ladders.forEach(l => { if (l.start === currentPos) player.pos = l.end; });
+
+                this.#updatePlayerPosition(playerId);
+
+                // चलते वक्त animation OFF
+                canvas.stopWalk();
+            }
+        }, 400);
+    }
+    #updatePlayerPosition(playerId) {
+        const player = this.#players[playerId];
+        const canvas = player.canvas;
+        const pos = player.pos;
+
+        // अगर अभी तक board पर नहीं रखा गया
+        if (pos === 0 || !this.#BoxCenterList[pos]) {
+            // start position मान लो box 1 के बाहर corner पर
+            canvas.style.left = "10px";
+            canvas.style.bottom = "10px";
+            return;
+        }
+
+        const { x, y } = this.#BoxCenterList[pos];
+        const bordRect = this.#elemts['bord'].getBoundingClientRect();
+
+        const offsetX = x - bordRect.left - canvas.width / 2;
+        const offsetY = y - bordRect.top - canvas.height / 2;
+
+        canvas.style.left = `${offsetX}px`;
+        canvas.style.top = `${offsetY}px`;
+    }
+
+
+    // this.#applySpriteAnimation(canvas, avatar.file, avatar.frameWidth, avatar.frameHeight, avatar.totalFrames);
+    
+    #applySpriteAnimation(canvas, walkSpriteSrc, idleSpriteSrc, frameWidth, frameHeight, totalFrames) {
+        const ctx = canvas.getContext("2d");
+        const walkSprite = new Image();
+        const idleSprite = new Image();
+
+        walkSprite.src = walkSpriteSrc;
+        idleSprite.src = idleSpriteSrc;
+
+        let frame = 0;
+        let animating = false;
+        let animationId = null;
+
+        const drawIdle = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(idleSprite, 0, 0, frameWidth, frameHeight, 0, 0, canvas.width, canvas.height);
+        };
+
+        const drawWalk = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(
+                walkSprite,
+                frame * frameWidth, 0, frameWidth, frameHeight,
+                0, 0, canvas.width, canvas.height
+            );
+        };
+
+        const animate = () => {
+            if (!animating) return;
+            frame = (frame + 1) % totalFrames;
+            drawWalk();
+            animationId = setTimeout(() => requestAnimationFrame(animate), 120);
+        };
+
+        canvas.startWalk = () => {
+            if (animating) return;
+            animating = true;
+            animate();
+        };
+
+        canvas.stopWalk = () => {
+            animating = false;
+            if (animationId) clearTimeout(animationId);
+            frame = 0;
+            drawIdle(); // रुकते ही idle दिखेगा
+        };
+
+        idleSprite.onload = () => drawIdle();
+    }
+
+/* player movement code End*/ 
+
+
+
     #toggleScreen() {
         const {toggleBtnImg} = this.#elemts;
 
@@ -282,10 +421,10 @@ export class gameDashbord{
         // console.log(this.#BoxCenterList);
     }
     #genratePlayerForm( current_player=1){
-        const {playerAvtar_container, newPlayerCard} =  this.#elemts;
+        const {playerAvtar_container, newPlayerCard, playerCount_container} =  this.#elemts;
 
         playerAvtar_container.innerHTML = ""; //Empty container
-        console.log(current_player);
+        // console.log(current_player);
         
         this.#players[current_player] = {playerName:"", avatar:null };
         const form =  document.createElement('form');
@@ -310,20 +449,24 @@ export class gameDashbord{
 
             this.#players[playerId].avatar = avatarId;
             this.#players[playerId].playerName = playerName;
-            console.log(this.#players);
-            console.log(playerId, this.#totalPlayers);
+            // console.log(this.#players);
+            // console.log(playerId, this.#totalPlayers);
 
             if (playerId < this.#totalPlayers){
-                console.log('if con');
                 this.#genratePlayerForm(playerId+1);
                 
             }else{
                 alert("Game started");
-                playerAvtar_container.innerHTML=""
-                playerAvtar_container.classList.add('hide');
-                playerCount_container.classList.remove('hide');
+                
+                this.#resetNewPlayerCard(); //reset container
+                
+
+                //store player info
+                this.#resetGame();
+                this.#storePlayerData();
 
                 newPlayerCard.classList.add('hide');
+                this.#loadPlayerOnBord();
                 
             }
         });
@@ -359,7 +502,7 @@ export class gameDashbord{
 
         let frame = 0;
         sprite.onload = () => {
-            console.log(sprite);
+            // console.log(sprite);
             setInterval(() => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(

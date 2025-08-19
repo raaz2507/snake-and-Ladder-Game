@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-     <meta http-equiv="refresh" content="0;url=./SnL_game.html" >
+     <!-- <meta http-equiv="refresh" content="0;url=./SnL_game.html" > -->
     <title>snake and Ladder Game</title>
     <style>
         body, html{
@@ -16,38 +16,89 @@
             margin: 0;
             box-sizing: border-box;
         }
+    </style>
+    <style>
+        
         body{
             display: flex;
             align-items: center;
             justify-content: center;
-            background: url('./img/back2.svg') center ;
-            background-size: 300px 300px;
-            backdrop-filter: blur(5px);
+            gap: 4rem;
+            background: url('./img/snake_skin.jpg') center ;
+            background-size: cover;
+            backdrop-filter: blur(2px);
         }
-        #redirect2game{
-            display: inline-block;
-            width:max-content;
-            padding: 12px;
-            border: 1px solid gray;
+        body::after{
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: -1;
+        }
+        .card{
+            /* border: 1px solid whitesmoke; */
+            padding: 1.5rem  0.8rem;
             border-radius: 10px;
+            text-align: center;
+            font-size: 1.7rem;
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.01s;
+        }
+
+        .card a{
             text-decoration: none;
-            font-weight: bolder;
-            font-family: Arial, Helvetica, sans-serif;
-            color:cornflowerblue;
-            box-shadow: 0px 0px 13px -3px rgba(0, 0, 0, 0.541);
-            background-color: whitesmoke;
+            color: rgb(255, 185, 186);
+            text-shadow: 0px 0px 6px white ;
         }
-        #redirect2game:hover{
-            color: white;
-            background-color: cornflowerblue;
+
+        .card .imageFrame{
+            width: 30vmin;
+            height: 30vmin;
         }
-        #redirect2game:active{
-            box-shadow: none;
-            color:greenyellow;
+        .card .imageFrame img{
+            width: 100%;
+            height: auto;
+            box-shadow: inset 0px 0px 13px -3px rgba(0, 0, 0, 0.664);
+            background-color: wheat;
+            border-radius: 10px;
+            /* margin: 1rem .5rem .5rem 2rem; */
         }
+        .card .tag{
+            display: block;
+            margin: 1rem 0 0 0;
+        }
+            /* hover effect */
+        .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+}
+
+        .card:hover .tag {
+        color: #0077ff;
+        }
+
     </style>
+
 </head>
 <body>
-    <a href="./SnL_game.html" id="redirect2game">Get To My Game</a>
+    <div class="card">
+        <a href="./snake_n_Ladder_classic.html" class="openGameLink">
+            <div class="imageFrame">
+                <img src="./img/Classical_snake.jpg" alt="game Image">
+            </div>
+            <span class="tag">Classical Mode</span>
+        </a>
+    </div>
+   
+    <div class="card">
+        <a href="./snake_n_Ladder_neo.html" class="openGameLink">
+            <div class="imageFrame">
+                <img src="./img/mordern_snake.jpg" alt="game Image">
+            </div>
+            <span class="tag">Mordern Mode</span>
+        </a>
+    </div>
+    
 </body>
 </html>

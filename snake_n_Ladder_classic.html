@@ -21,11 +21,46 @@
     }
 .player{
     position: absolute;
-    width:3vmin;
-    height: 3vmin;
-    z-index: 6;
+    width:8vmin;
+    height: 8vmin;
+    z-index: 3;
+    transform-origin: center center;
+    border: 1px solid  red;
 }
-    
+.player::after{
+    content: attr(data-player-name);
+    background-color: skyblue;
+    position: absolute;
+    bottom:100%;
+    left:50%;
+    transform: translateX(-50%);
+    font-size: 1vmin;
+    white-space: nowrap;
+}
+#plateform{
+    background-color: rgba(255, 192, 203, 0.8);
+    box-shadow: inset 1px 1px 13px -1px rgb(255, 139, 159);
+    border-radius: 10px;
+    min-width: 10vmin;
+    min-height: 10vmin;
+    padding: 12px 6px;
+    position: absolute;
+    right:100%;
+    bottom:0;
+    display: flex;                /* flex activate */
+  justify-content: center;      /* horizontally center */
+  flex-wrap: wrap;
+  align-items: center;          /* vertically center */
+}
+#plateform:after{
+    content: 'START';
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    font-size: 3vmin;
+    font-weight: 800;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: rgba(245, 245, 245, 0.4);
+}  
 </style>
 <body>
     <div class="blur"></div>
@@ -69,7 +104,7 @@
             <!-- <img src="./img/cupple.gif" alt="" srcset=""> -->
              <button id="startNewGameBtn">Start New Game</button>
         </aside>
-        <div id="bord"></div>
+        <div id="bord"><div id="plateform"></div></div>
     </main>
     <footer>&copy; Snake and Leader Game | Made with <a href="./img/cupple.gif" target="_blank">❤️</a> for Rashi. </footer>
 
