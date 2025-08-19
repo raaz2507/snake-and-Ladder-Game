@@ -67,17 +67,19 @@ aside #diceInstructions{
     font-size: 2rem;
     background-color: hsla(0, 0%, 96%, 0.5);
     border-radius: 10px;
+    box-shadow: 1px 1px 9px -4px rgba(0, 0, 0, 0.7);
     transition: background .02s ease;
    }
    
    #manualDiceRoll button:active{
-    background-color: rgb(43, 255, 0);
+    background-color: rgba(43, 255, 0, 0.26);
+    box-shadow: 1px 1px 4px -4px rgba(0, 0, 0, 0.7);
    }
 
 /* manualy Dice Role end */
 
 
-/* btn styling start */
+/* dice switch btn styling start */
   .switch{
     cursor: pointer;
   }
@@ -147,21 +149,36 @@ aside #diceInstructions{
     left:0.2rem;
     right: auto;  
   }
-/* btn styling end  */
+/* dice switch btn styling end  */
 
 
 
 
 /* Future elements */
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 aside .playerTurnInfo {
-    font-size: 1.2rem;
+    font-family: 'Share Tech Mono', monospace; /* 7-seg look वाला font */
+    font-size: 1rem;
     font-weight: 600;
     text-align: center;
-    color: #880e4f;
+    color: #00ff66; /* हरा रंग */
+    letter-spacing: 2px;
+    padding: 12px 10px;
+    border-radius: 10px;
+    background: #008000cc;
+    text-shadow: 0 0 6px #00ff66, 0 0 12px #00ff66, 0 0 20px #00ff66;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+aside .fullScrenTogleBtnBlock{
+  text-align: center;
+  /* display: flex;
+  align-items: center;
+  justify-content: center; */
 }
 aside #toggleScreenBtn{
     width: 3rem;
     height: 3rem;
+    margin: 1rem 0;
 }
 
 /* start new game styling start */

@@ -7,6 +7,20 @@
 </head>
 <link rel="stylesheet" href="./css/style.css">
 <style>
+    @font-face {
+        font-family: 'CREATURE_PERSONAL_USE';
+        src: url('./fonts/CREATURE_PERSONAL_USE.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'MegaSnake';
+        src: url('./fonts/MegaSnake-Regular.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+    /* *{ border: 1px solid red !important;} */
+    
     .diceBlock{
         width:100%;
         height: 100%;
@@ -60,18 +74,68 @@
     font-weight: 800;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     color: rgba(245, 245, 245, 0.4);
-}  
+}
+.gameStartMessage{
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height: 100%;
+    
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20vmin;
+    font-family: 'CREATURE_PERSONAL_USE';
+    color:greenyellow;
+    text-shadow: 1px 1px 15px green;
+    text-shadow: 
+        -2px -1px 5px green,  
+         2px -1px 5px green,
+        -2px  1px 5px green,
+         2px  1px 5px green; /* चारों तरफ काला border */
+    backdrop-filter: blur(2px);
+    background-color: rgba(157, 235, 135, 0.219);
+}
+.finishMessage{
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height: 100%;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20vmin;
+    font-family: 'MegaSnake';
+    letter-spacing: 5px;
+    color: skyblue;
+}
+.testDiv{
+    position: fixed;
+    top:0;
+    left:0;
+    width:100px;
+    height: 100px;
+}
 </style>
 <body>
     <div class="blur"></div>
     <header>Snake and Leader</header>
     <main>
         <aside>
-            <p>Enter Full Screen</p>
-            <button id="toggleScreenBtn">
+            <div class="playerTurnInfo">Player 1's Turn</div>
+            <div class="fullScrenTogleBtnBlock">
+                <p>Enter Full Screen</p>
+                <button id="toggleScreenBtn">
+                    <img src="./img/expand-solid-full.svg" alt="exend" title="Full Screen" id="toggleScreenBtnImg">
+                </button>
+            </div>
+            
                 
-                <img src="./img/expand-solid-full.svg" alt="exend" title="Full Screen" id="toggleScreenBtnImg">
-             </button>
+                
             <label for="diceToggleBtn" class="switch" >
                 <input type="checkbox" name="" id="diceToggleBtn" aria-checked="false" checked>
                 <div class="switch-btn"></div>
@@ -100,7 +164,7 @@
                 </div>
             </div>
 
-            <div class="playerTurnInfo">Player 1's Turn</div>
+            
             <!-- <img src="./img/cupple.gif" alt="" srcset=""> -->
              <button id="startNewGameBtn">Start New Game</button>
         </aside>
@@ -135,7 +199,13 @@
     </div>
 
 <!-- pop up box end  -->
+ <!-- game start dilod -->
+<div class="gameStartMessage hide">Game Started </div>
+<div class="finishMessage hide"> Khushi finish the Game</div>
 
+
+
+div.testDiv*1000
 <script type="module" src="./js/script.js"></script></script>   
 <script>
    

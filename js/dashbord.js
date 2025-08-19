@@ -19,6 +19,7 @@ export class gameDashbord{
     };
     #lastDiceFace =-1;
     #players = {}; //= {1:{playerName:"khushi", pos:0, avatar:1, canvas:null },};
+    #tempPlayersData={};
     #totalPlayers=0;
     #charAvatar={1: {canvasId:"canvas1", file:"./img/pngegg.png", frameWidth: 256, frameHeight: 256, totalFrames:6},
                 2: {canvasId:"canvas2", file:"./img/pngegg.png", frameWidth: 256, frameHeight: 256, totalFrames:6},
@@ -32,7 +33,8 @@ export class gameDashbord{
         this.#setEvents();
         // this.#getBoxCenter();
         this.#loadSnaksLadders_onBord();
-        this.#players= this.#getPlayerData();
+        this.#players = this.#getPlayerData();
+        console.log( this.#players);
         this.#loadPlayerOnBord();
     }
 
@@ -75,6 +77,7 @@ export class gameDashbord{
         dice.addEventListener("click",()=>{
             this.#lastDiceFace = diceObj.RollDice();
             this.#movePlayer(1, this.#lastDiceFace);
+            this.#storePlayerData(this.#players);
             // this.#rollDice();
         });
         
@@ -127,38 +130,54 @@ export class gameDashbord{
             this.#totalPlayers = count;
             playerCount_container.classList.add('hide');
             
+            this.#tempPlayersData={}; //this will reset list for genratePlayer Form
             this.#genratePlayerForm();
         }); 
     }
-    #storePlayerData(){
-        localStorage.setItem('playersData', JSON.stringify(this.#players));
+    
+    /*player data store methoss start*/
+    #storePlayerData(playerData){
+        console.log(playerData);
+        localStorage.setItem('playersData', JSON.stringify(playerData));
+        this.#players= playerData;
     }
     #getPlayerData(){
-        const data = JSON.parse( localStorage.getItem('playersData') ) || {};
+        let data={};
+        try{
+            data = localStorage.getItem('playersData');
+            data = data ? JSON.parse( data ) : {};
+        }catch(e){
+            console.error("Corrupted player data in localStorage:", e);
+            localStorage.removeItem('playersData'); // corrupted clear
+            return {};
+        }
         console.log(data);
-        return data;
+        return data || {};
     }
-/* player movement code start*/ 
     #loadPlayerOnBord(){
-        for (const [pid] of Object.keys(this.#players)){
-            this.#spawnPlayer(pid);
+        for (const pid of Object.keys(this.#players)) {
+            this.#spawnPlayer(parseInt(pid));
         }
     }
     #resetGame(){
-        // this.#players={};
-        this.#storePlayerData();
+        this.#players={};
+        localStorage.removeItem('playersData');
     }
     #resetNewPlayerCard(){
+        const {playerAvtar_container, playerCount_container}=this.#elemts;
         playerAvtar_container.innerHTML=""
         playerAvtar_container.classList.add('hide');
         playerCount_container.classList.remove('hide');
-    }
+    } 
+    /*player data store methoss end*/ 
+/* player movement code start*/ 
+    
     #spawnPlayer(playerId) {
         const { bord } = this.#elemts;
         const player = this.#players[playerId];
         const avatar = this.#charAvatar[player.avatar];
 
-        console.log(this.#charAvatar[player.avatar]);
+        // console.log(this.#charAvatar[player.avatar]);
 
         const canvas = document.createElement('canvas');
         canvas.width = this.#charAvatar[player.avatar].frameWidth ;
@@ -175,7 +194,10 @@ export class gameDashbord{
         // document.body.appendChild(canvas);
 
         this.#players[playerId].canvas = canvas;
-        this.#players[playerId].pos = 0;
+        if (!this.#players[playerId].pos){
+            this.#players[playerId].pos = 0;
+        }
+        
 
         // यहां avatar sprite animation apply करो
         this.#applySpriteAnimation(canvas, avatar.file, avatar.file, avatar.frameWidth, avatar.frameHeight, avatar.totalFrames);
@@ -373,8 +395,28 @@ export class gameDashbord{
             bord.appendChild(ladderImage);
             positionImage(ladderImage, this.#BoxCenterList[obj.start], this.#BoxCenterList[obj.end]);
         });
+function positionImage(image, box1center, box2center) {
+    const { x:x1, y:y1 } = box1center;
+    const { x:x2, y:y2 } = box2center;
 
-        function positionImage(image, box1center, box2center) {
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const length = Math.sqrt(dx * dx + dy * dy);
+    const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+
+    const bordRect = bord.getBoundingClientRect();
+
+    // अब हमेशा relative position निकालें
+    const offsetX = x1 - bordRect.left;
+    const offsetY = y1 - bordRect.top;
+
+    image.style.width = `${length}px`;
+    image.style.height = `auto`;
+    image.style.left = `${offsetX}px`;
+    image.style.top = `${offsetY}px`;
+    image.style.transform = `rotate(${angle}deg)`;
+}
+        function positionImage2(image, box1center, box2center) {
             const { x:x1, y:y1 } = box1center;
             const { x:x2, y:y2 } = box2center;
 
@@ -384,7 +426,7 @@ export class gameDashbord{
             let angle = Math.atan2(dy, dx) * (180 / Math.PI);
             // console.log( image.naturalHeight );
             // console.log( image.offsetHeight );
-            let imgHeight = 80; // तुम्हारी image की height (px में)
+            let imgHeight = 10; // तुम्हारी image की height (px में)
             
             // Position को bord के अंदर relative करने के लिए bord का offset निकालो
             const bordRect = bord.getBoundingClientRect();
@@ -426,7 +468,7 @@ export class gameDashbord{
         playerAvtar_container.innerHTML = ""; //Empty container
         // console.log(current_player);
         
-        this.#players[current_player] = {playerName:"", avatar:null };
+        this.#tempPlayersData[current_player] = {playerName:"", avatar:null };
         const form =  document.createElement('form');
 
         form.name = `player_avatarForm`;
@@ -447,27 +489,26 @@ export class gameDashbord{
             const playerName = event.target.playerName.value;
             const avatarId =   event.target.player_avatar.value;
 
-            this.#players[playerId].avatar = avatarId;
-            this.#players[playerId].playerName = playerName;
-            // console.log(this.#players);
+            this.#tempPlayersData[playerId].avatar = avatarId;
+            this.#tempPlayersData[playerId].playerName = playerName;
+            // console.log(this.#tempPlayersData);
             // console.log(playerId, this.#totalPlayers);
 
             if (playerId < this.#totalPlayers){
                 this.#genratePlayerForm(playerId+1);
                 
             }else{
-                alert("Game started");
                 
+                this.#storePlayerData(this.#tempPlayersData);
+                this.#tempPlayersData={};
                 this.#resetNewPlayerCard(); //reset container
-                
+                newPlayerCard.classList.add('hide');
 
                 //store player info
-                this.#resetGame();
-                this.#storePlayerData();
-
-                newPlayerCard.classList.add('hide');
-                this.#loadPlayerOnBord();
+                // this.#resetGame();
                 
+                this.#loadPlayerOnBord();
+                alert("Game started");
             }
         });
 
