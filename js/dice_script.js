@@ -7,6 +7,7 @@
 
 export class Dice{
     #dice;// = document.querySelector('.dice');
+    rollDuration = 2050;
     constructor(dice){
         const rollBtn = document.querySelector('.roll');
         this.#dice = dice;
@@ -65,6 +66,6 @@ export class Dice{
 
             dice.style.animation = 'none';
 
-        }, 2050);
+        }, this.rollDuration);
     }
 }

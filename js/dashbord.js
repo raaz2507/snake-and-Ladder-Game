@@ -1,4 +1,6 @@
 import { Dice as diceClass } from './dice_script.js';
+import { ladderAnimations, playerAnimations, snakeAnimations } from './animation.js';
+import { animateAvatar, applySnakeSpriteAnimation, applySpriteAnimation, playSnakeSlither } from './animation_engine.js';
 
 export class gameDashbord{
     #elemts={};
@@ -6,26 +8,25 @@ export class gameDashbord{
     // #snakeLaddersPositionData ={ snakes : { 98: 66, 62: 19, 25: 5 }, ladders : { 4: 14, 9: 31, 40: 59 } }
     #snakeLaddersPositionData ={
         snakes: [
-            { start: 98, end: 27, image: './img/snake.png' },
-            { start: 62, end: 46, image: './img/snake.png' },
-            { start: 25, end: 7,  image: './img/snake.png' },
+            { start: 98, end: 27, animation: snakeAnimations.classic },
+            { start: 62, end: 46, animation: snakeAnimations.classic },
+            { start: 25, end: 7,  animation: snakeAnimations.classic },
         ],
         ladders: [
-            { start: 4,  end: 22, image: './img/Ladder.png' },
-            { start: 9,  end: 31, image: './img/Ladder.png' },
-            { start: 40, end: 59, image: './img/Ladder.png' },
-            { start: 48, end: 89, image: './img/Ladder.png' },
+            { start: 4,  end: 22, animation: ladderAnimations.classic },
+            { start: 9,  end: 31, animation: ladderAnimations.classic },
+            { start: 40, end: 59, animation: ladderAnimations.classic },
+            { start: 48, end: 89, animation: ladderAnimations.classic },
         ]
     };
     #lastDiceFace =-1;
+    #isRollingDice = false;
+    #currentPlayerId = 1;
     #players = {}; //= {1:{playerName:"khushi", pos:0, avatar:1, canvas:null },};
     #tempPlayersData={};
     #totalPlayers=0;
-    #charAvatar={1: {canvasId:"canvas1", file:"./img/pngegg.png", frameWidth: 256, frameHeight: 256, totalFrames:6},
-                2: {canvasId:"canvas2", file:"./img/pngegg.png", frameWidth: 256, frameHeight: 256, totalFrames:6},
-                3: {canvasId:"canvas3", file:"./img/pngegg.png", frameWidth: 256, frameHeight: 256, totalFrames:6},
-                4: {canvasId:"canvas4", file:"./img/pngegg.png", frameWidth: 256, frameHeight: 256, totalFrames:6},
-                };
+    #charAvatar = playerAnimations;
+    #confettiInterval = null;
 
     constructor(){
         this.#getElements();
@@ -34,12 +35,16 @@ export class gameDashbord{
         // this.#getBoxCenter();
         this.#loadSnaksLadders_onBord();
         this.#players = this.#getPlayerData();
+        this.#currentPlayerId = this.#getSavedTurn();
         console.log( this.#players);
         this.#loadPlayerOnBord();
+        this.#updateTurnInfo();
     }
 
     #getElements(){
         this.#elemts['bord'] = document.getElementById('bord');
+        this.#elemts['plateform'] = document.getElementById('plateform');
+        this.#elemts['completePlateform'] = document.getElementById('completePlateform');
         // this.#elemts['dice'] = document.getElementById("dice");
         this.#elemts['dice'] = document.querySelector(".dice");
         this.#elemts['dice_container'] =document.querySelector('.dice_container');
@@ -49,6 +54,7 @@ export class gameDashbord{
         this.#elemts['manualDiceRoll'] = document.getElementById('manualDiceRoll');
 
         this.#elemts['diceToggleBtn'] = document.getElementById('diceToggleBtn');
+        this.#elemts['playerTurnInfo'] = document.querySelector('.playerTurnInfo');
 
 
         /* pop box elemts*/
@@ -71,13 +77,18 @@ export class gameDashbord{
             document.querySelectorAll('.snakeImg').forEach(el => el.remove()); // पुरानी images हटाओ
             document.querySelectorAll('.leaderImg').forEach(el => el.remove());
             this.#loadSnaksLadders_onBord();
+            this.#updateAllPlayerPositions();
         });
         const diceObj = new diceClass(dice); //dice obj
         
         dice.addEventListener("click",()=>{
+            if (this.#isRollingDice) return;
+
+            this.#isRollingDice = true;
             this.#lastDiceFace = diceObj.RollDice();
-            this.#movePlayer(1, this.#lastDiceFace);
-            this.#storePlayerData(this.#players);
+            setTimeout(() => {
+                this.#playCurrentTurn(this.#lastDiceFace);
+            }, diceObj.rollDuration);
             // this.#rollDice();
         });
         
@@ -85,13 +96,16 @@ export class gameDashbord{
         
         manualDiceRoll.addEventListener('click', (event)=>{
             if (event.target.tagName === 'BUTTON'){
+                if (this.#isRollingDice) return;
+
+                this.#isRollingDice = true;
                 this.#lastDiceFace = event.target.value;
+                this.#playCurrentTurn(Number(this.#lastDiceFace));
             }    
         });
-        
-        diceToggleBtn.addEventListener('change', (event)=>{
-            let diceTb = event.target.checked;
-            console.log(diceTb);
+
+        const updateDiceMode = () => {
+            let diceTb = diceToggleBtn.checked;
             if (diceTb){
                 manualDiceRoll.classList.add('hide');
                 dice_container.classList.remove('hide');
@@ -101,7 +115,17 @@ export class gameDashbord{
                 dice_container.classList.add('hide');
                 document.getElementById('diceInstructions').innerText= "Select Dice Number";
             }
+        };
+        const savedDiceMode = localStorage.getItem('diceMode');
+        if (savedDiceMode) {
+            diceToggleBtn.checked = savedDiceMode === 'dice';
+        }
+        
+        diceToggleBtn.addEventListener('change', ()=>{
+            localStorage.setItem('diceMode', diceToggleBtn.checked ? 'dice' : 'manual');
+            updateDiceMode();
         });
+        updateDiceMode();
 
 
         /*pop up events*/
@@ -154,14 +178,122 @@ export class gameDashbord{
         console.log(data);
         return data || {};
     }
+    #getSavedTurn(){
+        const savedPlayerId = parseInt(localStorage.getItem('currentPlayerId'));
+        return Number.isInteger(savedPlayerId) ? savedPlayerId : 1;
+    }
+    #getPlayerIds(){
+        return Object.keys(this.#players).map(Number).sort((a, b) => a - b);
+    }
+    #getActivePlayerIds(){
+        return this.#getPlayerIds().filter(pid => {
+            const player = this.#players[pid];
+            return !player.completed && (player.pos ?? 0) < 100;
+        });
+    }
+    #getCurrentPlayerId(){
+        const playerIds = this.#getActivePlayerIds();
+        if (!playerIds.length) return null;
+
+        if (!playerIds.includes(this.#currentPlayerId)) {
+            this.#currentPlayerId = playerIds[0];
+            this.#storeCurrentTurn();
+        }
+
+        return this.#currentPlayerId;
+    }
+    #storeCurrentTurn(){
+        localStorage.setItem('currentPlayerId', this.#currentPlayerId);
+    }
+    #goToNextTurn(){
+        const playerIds = this.#getActivePlayerIds();
+        if (!playerIds.length) {
+            this.#updateTurnInfo();
+            return;
+        }
+
+        const currentIndex = playerIds.indexOf(this.#currentPlayerId);
+        const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % playerIds.length;
+        this.#currentPlayerId = playerIds[nextIndex];
+        this.#storeCurrentTurn();
+        this.#updateTurnInfo();
+    }
+    #updateTurnInfo(){
+        const { playerTurnInfo } = this.#elemts;
+        if (!playerTurnInfo) return;
+
+        const currentPlayerId = this.#getCurrentPlayerId();
+        if (!currentPlayerId) {
+            playerTurnInfo.innerText = this.#getPlayerIds().length ? "Game Complete" : "Start New Game";
+            return;
+        }
+
+        const playerName = this.#players[currentPlayerId]?.playerName || `Player ${currentPlayerId}`;
+        playerTurnInfo.innerText = `${playerName}'s Turn`;
+    }
+    #playCurrentTurn(steps){
+        const playerId = this.#getCurrentPlayerId();
+        if (!playerId || !this.#players[playerId]?.canvas) {
+            this.#isRollingDice = false;
+            this.#updateTurnInfo();
+            return;
+        }
+
+        const player = this.#players[playerId];
+        if ((!player.pos || player.pos <= 0) && steps !== 1 && steps !== 6) {
+            this.#storePlayerData(this.#players);
+            this.#goToNextTurn();
+            this.#isRollingDice = false;
+            return;
+        }
+        if (player.pos > 0 && player.pos + steps > 100) {
+            this.#storePlayerData(this.#players);
+            this.#goToNextTurn();
+            this.#isRollingDice = false;
+            return;
+        }
+
+        this.#movePlayer(playerId, steps, () => {
+            this.#storePlayerData(this.#players);
+            this.#goToNextTurn();
+            this.#isRollingDice = false;
+        });
+    }
     #loadPlayerOnBord(){
+        this.#elemts['bord'].querySelectorAll(':scope > .player, :scope > .playerNameTooltip').forEach(player => player.remove());
         for (const pid of Object.keys(this.#players)) {
             this.#spawnPlayer(parseInt(pid));
+        }
+        this.#updateAllPlayerPositions();
+    }
+    #updateAllPlayerPositions(){
+        for (const pid of Object.keys(this.#players)) {
+            const canvas = this.#players[pid].canvas;
+            if (!canvas) continue;
+
+            const transition = canvas.style.transition;
+            const tooltipTransition = this.#players[pid].tooltip?.style.transition;
+            canvas.style.transition = "none";
+            if (this.#players[pid].tooltip) this.#players[pid].tooltip.style.transition = "none";
+            this.#updatePlayerPosition(parseInt(pid));
+            requestAnimationFrame(() => {
+                canvas.style.transition = transition;
+                if (this.#players[pid].tooltip) this.#players[pid].tooltip.style.transition = tooltipTransition;
+            });
+        }
+    }
+    #updateCompletedPlayerPositions(){
+        for (const pid of this.#getPlayerIds()) {
+            const player = this.#players[pid];
+            if (player?.canvas && (player.completed || player.pos >= 100)) {
+                this.#updatePlayerPosition(pid);
+            }
         }
     }
     #resetGame(){
         this.#players={};
         localStorage.removeItem('playersData');
+        localStorage.removeItem('currentPlayerId');
     }
     #resetNewPlayerCard(){
         const {playerAvtar_container, playerCount_container}=this.#elemts;
@@ -180,134 +312,439 @@ export class gameDashbord{
         // console.log(this.#charAvatar[player.avatar]);
 
         const canvas = document.createElement('canvas');
-        canvas.width = this.#charAvatar[player.avatar].frameWidth ;
-        canvas.height = this.#charAvatar[player.avatar].frameHeight;
+        canvas.width = avatar.canvas?.width ?? avatar.canvasWidth ?? avatar.animations.idle.frameWidth;
+        canvas.height = avatar.canvas?.height ?? avatar.canvasHeight ?? avatar.animations.idle.frameHeight;
        
         canvas.style.position = 'absolute';
-        canvas.style.transition = "all 0.5s linear"; // smooth move
+        canvas.style.transition = "left 0.35s linear, top 0.35s linear"; // smooth move
 
         canvas.classList.add('player');
         canvas.dataset.playerId = playerId;
         canvas.dataset.playerName =  this.#players[playerId].playerName;
+        canvas.title = this.#players[playerId].playerName;
+
+        const tooltip = document.createElement('div');
+        tooltip.classList.add('playerNameTooltip');
+        tooltip.dataset.playerId = playerId;
+        tooltip.innerText = this.#players[playerId].playerName;
+        tooltip.title = this.#players[playerId].playerName;
 
         bord.appendChild(canvas);
+        bord.appendChild(tooltip);
         // document.body.appendChild(canvas);
 
         this.#players[playerId].canvas = canvas;
+        this.#players[playerId].tooltip = tooltip;
         if (!this.#players[playerId].pos){
             this.#players[playerId].pos = 0;
         }
         
 
         // यहां avatar sprite animation apply करो
-        this.#applySpriteAnimation(canvas, avatar.file, avatar.file, avatar.frameWidth, avatar.frameHeight, avatar.totalFrames);
+        applySpriteAnimation(canvas, avatar);
+        canvas.addEventListener('mouseenter', () => {
+            if (!this.#isRollingDice) canvas.playAnimation('hover');
+        });
+        canvas.addEventListener('mouseleave', () => {
+            if (!this.#isRollingDice) canvas.stopAnimation();
+        });
+        canvas.addEventListener('pointerdown', () => {
+            if (!this.#isRollingDice) canvas.playAnimation('touch');
+        });
+        canvas.addEventListener('pointerup', () => {
+            if (!this.#isRollingDice) canvas.stopAnimation();
+        });
+        canvas.addEventListener('pointercancel', () => {
+            if (!this.#isRollingDice) canvas.stopAnimation();
+        });
 
+        this.#applyPlayerDirection(playerId);
         this.#updatePlayerPosition(playerId);
     }
-    #movePlayer(playerId, steps) {
+    #movePlayer(playerId, steps, onMoveComplete = () => {}) {
         const player = this.#players[playerId];
         let targetPos = player.pos + steps;
-        if (targetPos > 100) targetPos = 100;
 
         let currentPos = player.pos;
         const canvas = player.canvas;
+        if (currentPos === targetPos) {
+            onMoveComplete();
+            return;
+        }
 
         // चलते वक्त animation ON
         canvas.startWalk();
 
         const walkInterval = setInterval(() => {
+            const previousPos = currentPos;
             currentPos++;
             player.pos = currentPos;
+            this.#setPlayerDirection(playerId, previousPos, currentPos);
             this.#updatePlayerPosition(playerId);
 
             if (currentPos === targetPos) {
                 clearInterval(walkInterval);
 
+                setTimeout(() => {
                 // Snake/Ladder check
                 const { snakes, ladders } = this.#snakeLaddersPositionData;
-                snakes.forEach(s => { if (s.start === currentPos) player.pos = s.end; });
-                ladders.forEach(l => { if (l.start === currentPos) player.pos = l.end; });
+                const snake = snakes.find(s => s.start === currentPos);
+                const ladder = ladders.find(l => l.start === currentPos);
+                const effect = snake ? "fall" : ladder ? "climb" : null;
+                const effectEnd = snake?.end ?? ladder?.end;
 
-                this.#updatePlayerPosition(playerId);
+                if (effect) {
+                    this.#setPlayerDirection(playerId, currentPos, effectEnd);
+                    if (snake) {
+                        this.#animateSnakeBite(playerId, currentPos, effectEnd, snake, () => {
+                            onMoveComplete();
+                        });
+                        return;
+                    }
+
+                    player.pos = effectEnd;
+                    canvas.playAnimation(effect);
+                    if (ladder) ladder.canvas?.playClimb?.();
+                    this.#updatePlayerPosition(playerId);
+                    setTimeout(() => {
+                        if (player.pos >= 100) {
+                            player.completed = true;
+                            this.#showVictory(playerId);
+                            this.#updateCompletedPlayerPositions();
+                        }
+
+                        canvas.stopWalk();
+                        onMoveComplete();
+                    }, 350);
+                    return;
+                }
 
                 // चलते वक्त animation OFF
+                if (player.pos >= 100) {
+                    player.completed = true;
+                    this.#showVictory(playerId);
+                    this.#updateCompletedPlayerPositions();
+                }
+
                 canvas.stopWalk();
+                onMoveComplete();
+                }, 350);
             }
-        }, 400);
+        }, 450);
     }
+
+    #showVictory(playerId) {
+        const player = this.#players[playerId];
+        if (!player || player.victoryShown) return;
+
+        player.victoryShown = true;
+        const rank = this.#getCompletedRank(playerId);
+        const playerName = player.playerName || `Player ${playerId}`;
+        const overlay = this.#getVictoryOverlay();
+        const title = overlay.querySelector('.victory-title');
+
+        title.innerText = `${playerName} reached ${rank}!`;
+        overlay.classList.remove('hide');
+        this.#startConfetti(overlay);
+    }
+
+    #getCompletedRank(playerId) {
+        const completedPlayerIds = this.#getPlayerIds().filter(pid => {
+            const completedPlayer = this.#players[pid];
+            return completedPlayer?.completed || completedPlayer?.pos >= 100 || pid === playerId;
+        });
+
+        return this.#formatRank(completedPlayerIds.length);
+    }
+
+    #formatRank(rank) {
+        const teen = rank % 100;
+        if (teen >= 11 && teen <= 13) return `${rank}th`;
+
+        const lastDigit = rank % 10;
+        if (lastDigit === 1) return `${rank}st`;
+        if (lastDigit === 2) return `${rank}nd`;
+        if (lastDigit === 3) return `${rank}rd`;
+        return `${rank}th`;
+    }
+
+    #getVictoryOverlay() {
+        let overlay = document.querySelector('.victory-overlay');
+        if (overlay) return overlay;
+
+        overlay = document.createElement('div');
+        overlay.className = 'victory-overlay hide';
+        overlay.innerHTML = `
+            <button class="victory-close" type="button" aria-label="Close victory message">&times;</button>
+            <div class="confetti-container"></div>
+            <h1 class="victory-title"></h1>
+        `;
+
+        overlay.querySelector('.victory-close').addEventListener('click', () => {
+            this.#hideVictory(overlay);
+        });
+
+        document.body.appendChild(overlay);
+        return overlay;
+    }
+
+    #hideVictory(overlay = document.querySelector('.victory-overlay')) {
+        if (!overlay) return;
+
+        overlay.classList.add('hide');
+        clearInterval(this.#confettiInterval);
+        this.#confettiInterval = null;
+        overlay.querySelector('.confetti-container')?.replaceChildren();
+    }
+
+    #startConfetti(overlay) {
+        const container = overlay.querySelector('.confetti-container');
+        if (!container) return;
+
+        clearInterval(this.#confettiInterval);
+        container.replaceChildren();
+
+        const confettiColors = ["#fce18a", "#ff726d", "#b48def", "#f4306d"];
+        const confettiAnimations = ["slow", "medium", "fast"];
+
+        this.#confettiInterval = setInterval(() => {
+            const confettiEl = document.createElement("div");
+            const confettiSize = `${Math.floor(Math.random() * 3) + 7}px`;
+            const confettiBackground = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+            const confettiLeft = `${Math.floor(Math.random() * overlay.offsetWidth)}px`;
+            const confettiAnimation = confettiAnimations[Math.floor(Math.random() * confettiAnimations.length)];
+
+            confettiEl.classList.add("confetti", `confetti--animation-${confettiAnimation}`);
+            confettiEl.style.left = confettiLeft;
+            confettiEl.style.width = confettiSize;
+            confettiEl.style.height = confettiSize;
+            confettiEl.style.backgroundColor = confettiBackground;
+
+            setTimeout(() => confettiEl.remove(), 3000);
+            container.appendChild(confettiEl);
+        }, 25);
+
+        setTimeout(() => {
+            clearInterval(this.#confettiInterval);
+            this.#confettiInterval = null;
+        }, 4500);
+    }
+
+    #animateSnakeBite(playerId, fromPos, toPos, snake, onComplete = () => {}) {
+        const player = this.#players[playerId];
+        const canvas = player.canvas;
+        const tooltip = player.tooltip;
+        const bordRect = this.#elemts['bord'].getBoundingClientRect();
+        const canvasRect = canvas.getBoundingClientRect();
+        const from = this.#getBoardPosition(fromPos, bordRect);
+        const to = this.#getBoardPosition(toPos, bordRect);
+        const dx = to.x - from.x;
+        const dy = to.y - from.y;
+        const distance = Math.hypot(dx, dy) || 1;
+        const waveX = -dy / distance;
+        const waveY = dx / distance;
+        const amplitude = Math.min(bordRect.width, bordRect.height) / 55;
+        const duration = 950;
+        const canvasTransition = canvas.style.transition;
+        const tooltipTransition = tooltip?.style.transition;
+        let startTime = null;
+
+        canvas.style.transition = "none";
+        if (tooltip) tooltip.style.transition = "none";
+        canvas.playAnimation("slither");
+        playSnakeSlither(snake);
+
+        const setPixelPosition = (x, y) => {
+            canvas.style.left = `${x - canvasRect.width / 2}px`;
+            canvas.style.top = `${y - canvasRect.height / 2}px`;
+            canvas.style.bottom = "";
+            this.#updatePlayerTooltipPosition(playerId);
+        };
+
+        const animate = (time) => {
+            if (!startTime) startTime = time;
+            const progress = Math.min((time - startTime) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const wave = Math.sin(progress * Math.PI * 5) * amplitude * (1 - progress * 0.35);
+            const x = from.x + dx * eased + waveX * wave;
+            const y = from.y + dy * eased + waveY * wave;
+
+            setPixelPosition(x, y);
+
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+                return;
+            }
+
+            player.pos = toPos;
+            setPixelPosition(to.x, to.y);
+            canvas.style.transition = canvasTransition;
+            if (tooltip) tooltip.style.transition = tooltipTransition;
+            canvas.stopWalk();
+            onComplete();
+        };
+
+        requestAnimationFrame(animate);
+    }
+
+    #attachBoardSpriteEvents(spriteCanvas) {
+        spriteCanvas.addEventListener('mouseenter', () => {
+            if (!this.#isRollingDice) spriteCanvas.playHover?.();
+        });
+        spriteCanvas.addEventListener('mouseleave', () => {
+            if (!this.#isRollingDice) spriteCanvas.stopAnimation?.();
+        });
+        spriteCanvas.addEventListener('pointerdown', () => {
+            if (!this.#isRollingDice) spriteCanvas.playTouch?.();
+        });
+        spriteCanvas.addEventListener('pointerup', () => {
+            if (!this.#isRollingDice) spriteCanvas.stopAnimation?.();
+        });
+        spriteCanvas.addEventListener('pointercancel', () => {
+            if (!this.#isRollingDice) spriteCanvas.stopAnimation?.();
+        });
+    }
+
     #updatePlayerPosition(playerId) {
         const player = this.#players[playerId];
         const canvas = player.canvas;
         const pos = player.pos;
 
         // अगर अभी तक board पर नहीं रखा गया
-        if (pos === 0 || !this.#BoxCenterList[pos]) {
-            // start position मान लो box 1 के बाहर corner पर
-            canvas.style.left = "10px";
-            canvas.style.bottom = "10px";
+        if (player.completed || (pos >= 100 && !this.#isRollingDice)) {
+            this.#updatePlayerCompletePosition(playerId);
             return;
         }
 
-        const { x, y } = this.#BoxCenterList[pos];
-        const bordRect = this.#elemts['bord'].getBoundingClientRect();
+        if (pos <= 0) {
+            // start position मान लो box 1 के बाहर corner पर
+            this.#updatePlayerStartPosition(playerId);
+            return;
+        }
 
-        const offsetX = x - bordRect.left - canvas.width / 2;
-        const offsetY = y - bordRect.top - canvas.height / 2;
+        const bordRect = this.#elemts['bord'].getBoundingClientRect();
+        const canvasRect = canvas.getBoundingClientRect();
+        const { x, y } = this.#getBoardPosition(pos, bordRect);
+
+        const offsetX = x - canvasRect.width / 2;
+        const offsetY = y - canvasRect.height / 2;
 
         canvas.style.left = `${offsetX}px`;
         canvas.style.top = `${offsetY}px`;
+        canvas.style.bottom = "";
+        this.#updatePlayerTooltipPosition(playerId);
     }
 
+    #updatePlayerTooltipPosition(playerId) {
+        const player = this.#players[playerId];
+        const canvas = player?.canvas;
+        const tooltip = player?.tooltip;
+        if (!canvas || !tooltip) return;
 
-    // this.#applySpriteAnimation(canvas, avatar.file, avatar.frameWidth, avatar.frameHeight, avatar.totalFrames);
-    
-    #applySpriteAnimation(canvas, walkSpriteSrc, idleSpriteSrc, frameWidth, frameHeight, totalFrames) {
-        const ctx = canvas.getContext("2d");
-        const walkSprite = new Image();
-        const idleSprite = new Image();
+        const canvasRect = canvas.getBoundingClientRect();
+        const left = parseFloat(canvas.style.left || "0") + canvasRect.width / 2;
+        const top = parseFloat(canvas.style.top || "0") - 4;
 
-        walkSprite.src = walkSpriteSrc;
-        idleSprite.src = idleSpriteSrc;
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${top}px`;
+    }
 
-        let frame = 0;
-        let animating = false;
-        let animationId = null;
+    #updatePlayerStartPosition(playerId) {
+        const { bord, plateform } = this.#elemts;
+        const player = this.#players[playerId];
+        const canvas = player.canvas;
+        if (!canvas || !plateform) return;
 
-        const drawIdle = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(idleSprite, 0, 0, frameWidth, frameHeight, 0, 0, canvas.width, canvas.height);
+        const waitingPlayerIds = this.#getActivePlayerIds().filter(pid => {
+            const waitingPlayer = this.#players[pid];
+            return waitingPlayer?.canvas && (!waitingPlayer.pos || waitingPlayer.pos <= 0);
+        });
+        const playerIndex = Math.max(waitingPlayerIds.indexOf(playerId), 0);
+        const totalPlayers = Math.max(waitingPlayerIds.length, 1);
+        const columns = Math.ceil(Math.sqrt(totalPlayers));
+        const rows = Math.ceil(totalPlayers / columns);
+        const row = Math.floor(playerIndex / columns);
+        const column = playerIndex % columns;
+        const bordRect = bord.getBoundingClientRect();
+        const plateformRect = plateform.getBoundingClientRect();
+        const canvasRect = canvas.getBoundingClientRect();
+        const cellWidth = plateformRect.width / columns;
+        const cellHeight = plateformRect.height / rows;
+        const offsetX = plateformRect.left - bordRect.left + column * cellWidth + cellWidth / 2 - canvasRect.width / 2;
+        const offsetY = plateformRect.top - bordRect.top + row * cellHeight + cellHeight / 2 - canvasRect.height / 2;
+
+        canvas.style.left = `${offsetX}px`;
+        canvas.style.top = `${offsetY}px`;
+        canvas.style.bottom = "";
+        this.#updatePlayerTooltipPosition(playerId);
+    }
+
+    #updatePlayerCompletePosition(playerId) {
+        const { bord, completePlateform } = this.#elemts;
+        const player = this.#players[playerId];
+        const canvas = player.canvas;
+        if (!canvas || !completePlateform) return;
+
+        const completedPlayerIds = this.#getPlayerIds().filter(pid => {
+            const completedPlayer = this.#players[pid];
+            return completedPlayer?.canvas && (completedPlayer.completed || completedPlayer.pos >= 100);
+        });
+        const playerIndex = Math.max(completedPlayerIds.indexOf(playerId), 0);
+        const totalPlayers = Math.max(completedPlayerIds.length, 1);
+        const columns = Math.ceil(Math.sqrt(totalPlayers));
+        const rows = Math.ceil(totalPlayers / columns);
+        const row = Math.floor(playerIndex / columns);
+        const column = playerIndex % columns;
+        const bordRect = bord.getBoundingClientRect();
+        const completePlateformRect = completePlateform.getBoundingClientRect();
+        const canvasRect = canvas.getBoundingClientRect();
+        const cellWidth = completePlateformRect.width / columns;
+        const cellHeight = completePlateformRect.height / rows;
+        const offsetX = completePlateformRect.left - bordRect.left + column * cellWidth + cellWidth / 2 - canvasRect.width / 2;
+        const offsetY = completePlateformRect.top - bordRect.top + row * cellHeight + cellHeight / 2 - canvasRect.height / 2;
+
+        canvas.style.left = `${offsetX}px`;
+        canvas.style.top = `${offsetY}px`;
+        canvas.style.bottom = "";
+        this.#updatePlayerTooltipPosition(playerId);
+    }
+
+    #setPlayerDirection(playerId, fromPos, toPos) {
+        if (fromPos <= 0 || fromPos > 100 || toPos <= 0 || toPos > 100) return;
+
+        const canvas = this.#players[playerId].canvas;
+        const bordRect = this.#elemts['bord'].getBoundingClientRect();
+        const fromPosition = this.#getBoardPosition(fromPos, bordRect);
+        const toPosition = this.#getBoardPosition(toPos, bordRect);
+
+        if (toPosition.x < fromPosition.x) {
+            this.#players[playerId].direction = "left";
+        } else if (toPosition.x > fromPosition.x) {
+            this.#players[playerId].direction = "right";
+        }
+
+        this.#applyPlayerDirection(playerId);
+    }
+
+    #applyPlayerDirection(playerId) {
+        const player = this.#players[playerId];
+        if (!player?.canvas) return;
+
+        player.canvas.style.transform = player.direction === "left" ? "scaleX(-1)" : "scaleX(1)";
+    }
+
+    #getBoardPosition(pos, bordRect = this.#elemts['bord'].getBoundingClientRect()) {
+        const logicalRow = Math.floor((pos - 1) / 10);
+        const logicalCol = (pos - 1) % 10;
+        const rowFromTop = 9 - logicalRow;
+        const colFromLeft = logicalRow % 2 === 0 ? logicalCol : 9 - logicalCol;
+        const cellWidth = bordRect.width / 10;
+        const cellHeight = bordRect.height / 10;
+
+        return {
+            x: colFromLeft * cellWidth + cellWidth / 2,
+            y: rowFromTop * cellHeight + cellHeight / 2,
         };
-
-        const drawWalk = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(
-                walkSprite,
-                frame * frameWidth, 0, frameWidth, frameHeight,
-                0, 0, canvas.width, canvas.height
-            );
-        };
-
-        const animate = () => {
-            if (!animating) return;
-            frame = (frame + 1) % totalFrames;
-            drawWalk();
-            animationId = setTimeout(() => requestAnimationFrame(animate), 120);
-        };
-
-        canvas.startWalk = () => {
-            if (animating) return;
-            animating = true;
-            animate();
-        };
-
-        canvas.stopWalk = () => {
-            animating = false;
-            if (animationId) clearTimeout(animationId);
-            frame = 0;
-            drawIdle(); // रुकते ही idle दिखेगा
-        };
-
-        idleSprite.onload = () => drawIdle();
     }
 
 /* player movement code End*/ 
@@ -341,26 +778,24 @@ export class gameDashbord{
         laddersList.forEach( obj =>{ ladders[obj.start]= obj.end; });
         
         const boxfeg = document.createDocumentFragment();
-        for (let row = 9; row >= 0; row--) {
-            for (let col = 0; col < 10; col++) {
-                let number;
-                if (row % 2 === 0) {
-                    number = row * 10 + col + 1; // Left to Right
-                } else {
-                    number = row * 10 + (9 - col) + 1; // Right to Left
-                }
-
-                addBox(number);
-            }
+        for (let number = 1; number <= 100; number++) {
+            addBox(number);
         }
         bord.append(boxfeg);
         
 
         function addBox(num){
             const newbox= document.createElement('div');
+            const logicalRow = Math.floor((num - 1) / 10);
+            const logicalCol = (num - 1) % 10;
+            const gridRow = 10 - logicalRow;
+            const gridCol = logicalRow % 2 === 0 ? logicalCol + 1 : 10 - logicalCol;
+
             newbox.classList.add('box');
             newbox.innerText = num;
             newbox.dataset.box_num = num;
+            newbox.style.gridRow = gridRow;
+            newbox.style.gridColumn = gridCol;
             if (snakes[num]) {
                 newbox.classList.add('snake');
                 newbox.innerHTML += ' 🐍';
@@ -378,22 +813,29 @@ export class gameDashbord{
     #loadSnaksLadders_onBord(){
         const {bord} =  this.#elemts;
         const {snakes, ladders}= this.#snakeLaddersPositionData;
-        this.#getBoxCenter();
+        const bordRect = bord.getBoundingClientRect();
         snakes.forEach((obj)=>{
-            // crearte img obj
-            const snakeImage = new Image(); // नया HTMLImageElement बना
-            snakeImage.src = obj.image; // उस image का file path दिया
-            snakeImage.classList.add('snakeImg'); // यह जरूरी है
+            const snakeImage = document.createElement('canvas');
+            snakeImage.classList.add('snakeImg');
+            snakeImage.dataset.snakeStart = obj.start;
+            applySnakeSpriteAnimation(snakeImage, obj);
+            this.#attachBoardSpriteEvents(snakeImage);
+            obj.canvas = snakeImage;
             bord.appendChild(snakeImage);
-            positionImage(snakeImage, this.#BoxCenterList[obj.start], this.#BoxCenterList[obj.end])
+            positionImage(snakeImage, this.#getBoardPosition(obj.start, bordRect), this.#getBoardPosition(obj.end, bordRect))
         });
         ladders.forEach((obj)=>{
-            const ladderImage = new Image();
-            ladderImage.src = obj.image;
+            const ladderImage = document.createElement('canvas');
             ladderImage.classList.add('leaderImg')
+            ladderImage.dataset.ladderStart = obj.start;
+            ladderImage.width = obj.animation.canvas?.width ?? obj.animation.animations.idle.frameWidth;
+            ladderImage.height = obj.animation.canvas?.height ?? obj.animation.animations.idle.frameHeight;
+            applySpriteAnimation(ladderImage, obj.animation);
+            this.#attachBoardSpriteEvents(ladderImage);
+            obj.canvas = ladderImage;
 
             bord.appendChild(ladderImage);
-            positionImage(ladderImage, this.#BoxCenterList[obj.start], this.#BoxCenterList[obj.end]);
+            positionImage(ladderImage, this.#getBoardPosition(obj.start, bordRect), this.#getBoardPosition(obj.end, bordRect));
         });
 function positionImage(image, box1center, box2center) {
     const { x:x1, y:y1 } = box1center;
@@ -407,14 +849,14 @@ function positionImage(image, box1center, box2center) {
     const bordRect = bord.getBoundingClientRect();
 
     // अब हमेशा relative position निकालें
-    const offsetX = x1 - bordRect.left;
-    const offsetY = y1 - bordRect.top;
+    const offsetX = x1;
+    const offsetY = y1;
 
     image.style.width = `${length}px`;
     image.style.height = `auto`;
     image.style.left = `${offsetX}px`;
     image.style.top = `${offsetY}px`;
-    image.style.transform = `rotate(${angle}deg)`;
+    image.style.transform = `translateY(-50%) rotate(${angle}deg)`;
 }
         function positionImage2(image, box1center, box2center) {
             const { x:x1, y:y1 } = box1center;
@@ -447,12 +889,12 @@ function positionImage(image, box1center, box2center) {
     #getBoxCenter(){
         const { bord }= this.#elemts;
         
-        const boxs=  bord.querySelectorAll(':scope > div');
+        const boxs=  bord.querySelectorAll(':scope > .box');
 
         boxs.forEach((box)=>{
             const rect =  box.getBoundingClientRect();
-            const X= Math.floor(rect.left + (rect.width/2)) + window.scrollX;
-            const Y= Math.floor(rect.top + (rect.height/2)) + window.scrollY;
+            const X= Math.floor(rect.left + (rect.width/2));
+            const Y= Math.floor(rect.top + (rect.height/2));
             
             // console.log(`box=${box.dataset.box_num}, x= ${X} y=${Y}`);
             this.#BoxCenterList[`${ box.dataset.box_num}`]= {x:X, y: Y};
@@ -507,14 +949,17 @@ function positionImage(image, box1center, box2center) {
                 //store player info
                 // this.#resetGame();
                 
+                this.#currentPlayerId = 1;
+                this.#storeCurrentTurn();
                 this.#loadPlayerOnBord();
+                this.#updateTurnInfo();
                 alert("Game started");
             }
         });
 
         playerAvtar_container.appendChild(form);                               
         for (const [id, avtar]  of Object.entries(this.#charAvatar) ){
-            this.#animateAvatar(avtar.canvasId, avtar.file, avtar.frameWidth, avtar.frameHeight, avtar.totalFrames);    
+            animateAvatar(avtar.canvasId, avtar.animations.walk);
         }
         
         function playerAvtarOpctionGenrator(charAvatar){
@@ -532,28 +977,6 @@ function positionImage(image, box1center, box2center) {
                 return opctions;
         }
         playerAvtar_container.classList.remove('hide');
-    }
-
-
-    #animateAvatar(canvasId, spriteSrc, frameWidth, frameHeight, totalFrames) {
-        const canvas = document.getElementById(canvasId);
-        const ctx = canvas.getContext("2d");
-        const sprite = new Image();
-        sprite.src = spriteSrc;
-
-        let frame = 0;
-        sprite.onload = () => {
-            // console.log(sprite);
-            setInterval(() => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(
-                sprite,
-                frame * frameWidth, 0, frameWidth, frameHeight,
-                0, 0, canvas.width, canvas.height
-            );
-            frame = (frame + 1) % totalFrames;
-            }, 120);
-        };
     }
 }
 

@@ -51,12 +51,27 @@
     font-size: 1vmin;
     white-space: nowrap;
 }
-#plateform{
+.playerNameTooltip{
+    position: absolute;
+    z-index: 4;
+    transform: translate(-50%, -100%);
+    padding: 2px 6px;
+    border-radius: 4px;
+    background-color: skyblue;
+    color: #123;
+    font-size: 1.4vmin;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-weight: 700;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: left 0.35s linear, top 0.35s linear;
+}
+#plateform, #completePlateform{
     background-color: rgba(255, 192, 203, 0.8);
     box-shadow: inset 1px 1px 13px -1px rgb(255, 139, 159);
     border-radius: 10px;
-    min-width: 10vmin;
-    min-height: 10vmin;
+    width: 20vmin;
+    height: 20vmin;
     padding: 12px 6px;
     position: absolute;
     right:100%;
@@ -66,8 +81,25 @@
   flex-wrap: wrap;
   align-items: center;          /* vertically center */
 }
+#completePlateform{
+    right:100%;
+    left:auto;
+    top:0;
+    bottom:auto;
+    background-color: rgba(135, 206, 250, 0.8);
+    box-shadow: inset 1px 1px 13px -1px rgb(77, 166, 225);
+}
 #plateform:after{
     content: 'START';
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    font-size: 3vmin;
+    font-weight: 800;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: rgba(245, 245, 245, 0.4);
+}
+#completePlateform:after{
+    content: 'FINISH';
     writing-mode: vertical-rl;
     text-orientation: upright;
     font-size: 3vmin;
@@ -168,7 +200,7 @@
             <!-- <img src="./img/cupple.gif" alt="" srcset=""> -->
              <button id="startNewGameBtn">Start New Game</button>
         </aside>
-        <div id="bord"><div id="plateform"></div></div>
+        <div id="bord"><div id="plateform"></div><div id="completePlateform"></div></div>
     </main>
     <footer>&copy; Snake and Leader Game | Made with <a href="./img/cupple.gif" target="_blank">❤️</a> for Rashi. </footer>
 
