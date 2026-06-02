@@ -27,6 +27,7 @@ export class gameDashbord{
     #totalPlayers=0;
     #charAvatar = playerAnimations;
     #confettiInterval = null;
+    #gameMessageTimer = null;
 
     constructor(){
         this.#getElements();
@@ -50,6 +51,7 @@ export class gameDashbord{
         this.#elemts['dice_container'] =document.querySelector('.dice_container');
         this.#elemts['toggleScreenBtn'] = document.getElementById('toggleScreenBtn');
         this.#elemts['toggleBtnImg'] = document.getElementById('toggleScreenBtnImg');
+        this.#elemts['toggleScreenText'] = document.getElementById('toggleScreenText');
 
         this.#elemts['manualDiceRoll'] = document.getElementById('manualDiceRoll');
 
@@ -59,12 +61,16 @@ export class gameDashbord{
 
         /* pop box elemts*/
         this.#elemts["startNewGameBtn"]= document.getElementById("startNewGameBtn");
+        this.#elemts['newGameConfirmDialog'] = document.getElementById('newGameConfirmDialog');
+        this.#elemts['confirmNewGameBtn'] = document.getElementById('confirmNewGameBtn');
+        this.#elemts['cancelNewGameBtn'] = document.getElementById('cancelNewGameBtn');
         this.#elemts['newPlayerCard'] = document.getElementById('newPlayerCard');
 
         this.#elemts['playerCount_container'] = document.getElementById('playerCount_container');
         this.#elemts['playerRange'] = document.getElementById('player_count');
         this.#elemts['player_countDis'] = document.getElementById('player_countDis');
         this.#elemts['playerAvtar_container'] = document.getElementById('playerAvtar_container');
+        this.#elemts['gameStartMessage'] = document.querySelector('.gameStartMessage');
 
         this.#elemts['playerCountForm'] = document.forms['playerCountForm'];
         this.#elemts['player_avatarForm'] = document.forms['player_avatarForm']; 
@@ -129,13 +135,29 @@ export class gameDashbord{
 
 
         /*pop up events*/
-        const { startNewGameBtn, newPlayerCard } = this.#elemts;
+        const { startNewGameBtn, newPlayerCard, newGameConfirmDialog, confirmNewGameBtn, cancelNewGameBtn } = this.#elemts;
         const { playerRange, player_countDis, playerCount_container, playerAvtar_container } = this.#elemts;
         const { playerCountForm, player_avatarForm } = this.#elemts;
 
         startNewGameBtn.addEventListener('click', ()=>{
-            this.#resetNewPlayerCard();
-            newPlayerCard.classList.remove('hide');                
+            this.#openNewGameConfirmDialog();
+        });
+        confirmNewGameBtn.addEventListener('click', ()=>{
+            this.#closeNewGameConfirmDialog();
+            this.#openNewGameSetup();
+        });
+        cancelNewGameBtn.addEventListener('click', ()=>{
+            this.#closeNewGameConfirmDialog();
+        });
+        newGameConfirmDialog.addEventListener('click', (event)=>{
+            if (event.target === newGameConfirmDialog) {
+                this.#closeNewGameConfirmDialog();
+            }
+        });
+        document.addEventListener('keydown', (event)=>{
+            if (event.key === 'Escape' && !newGameConfirmDialog.classList.contains('hide')) {
+                this.#closeNewGameConfirmDialog();
+            }
         });
         newPlayerCard.addEventListener('click', ( event )=>{
             if (event.target === newPlayerCard){
@@ -301,6 +323,21 @@ export class gameDashbord{
         playerAvtar_container.classList.add('hide');
         playerCount_container.classList.remove('hide');
     } 
+    #openNewGameConfirmDialog(){
+        const { newGameConfirmDialog, confirmNewGameBtn } = this.#elemts;
+        newGameConfirmDialog.classList.remove('hide');
+        confirmNewGameBtn.focus();
+    }
+    #closeNewGameConfirmDialog(){
+        const { newGameConfirmDialog, startNewGameBtn } = this.#elemts;
+        newGameConfirmDialog.classList.add('hide');
+        startNewGameBtn.focus();
+    }
+    #openNewGameSetup(){
+        const { newPlayerCard } = this.#elemts;
+        this.#resetNewPlayerCard();
+        newPlayerCard.classList.remove('hide');
+    }
     /*player data store methoss end*/ 
 /* player movement code start*/ 
     
@@ -752,7 +789,7 @@ export class gameDashbord{
 
 
     #toggleScreen() {
-        const {toggleBtnImg} = this.#elemts;
+        const {toggleBtnImg, toggleScreenText} = this.#elemts;
 
         const header = document.getElementsByTagName('header')[0];
         const footer = document.getElementsByTagName('footer')[0];
@@ -760,10 +797,14 @@ export class gameDashbord{
             header.classList.remove('hide');
             footer.classList.remove('hide');
             toggleBtnImg.src = "./img/expand-solid-full.svg";
+            toggleBtnImg.title = "Full Screen";
+            toggleScreenText.innerText = "Enter Full Screen";
         }else{
             header.classList.add('hide');
             footer.classList.add('hide');
             toggleBtnImg.src = "./img/compress-solid-full.svg";
+            toggleBtnImg.title = "Exit Full Screen";
+            toggleScreenText.innerText = "Exit Full Screen";
         }
     }
 
@@ -912,6 +953,7 @@ function positionImage(image, box1center, box2center) {
         
         this.#tempPlayersData[current_player] = {playerName:"", avatar:null };
         const form =  document.createElement('form');
+        const submitButtonText = current_player < this.#totalPlayers ? `Save Player ${current_player}` : "Start Game";
 
         form.name = `player_avatarForm`;
         form.dataset.playerId = current_player;
@@ -923,7 +965,7 @@ function positionImage(image, box1center, box2center) {
                             <div class="avatar-options">
                                 ${playerAvtarOpctionGenrator(this.#charAvatar)}
                             </div>
-                            <button type="submit">Start....</button>`;
+                            <button type="submit">${submitButtonText}</button>`;
         
         form.addEventListener('submit', (event)=>{
             event.preventDefault();
@@ -953,7 +995,7 @@ function positionImage(image, box1center, box2center) {
                 this.#storeCurrentTurn();
                 this.#loadPlayerOnBord();
                 this.#updateTurnInfo();
-                alert("Game started");
+                this.#showGameMessage("Game Started");
             }
         });
 
@@ -963,20 +1005,51 @@ function positionImage(image, box1center, box2center) {
         }
         
         function playerAvtarOpctionGenrator(charAvatar){
-            
+                const avatarNames = {
+                    1: "Red Hero",
+                    2: "Robot",
+                    3: "Ninja",
+                    4: "Royal",
+                    5: "Princess",
+                    6: "Wizard",
+                    7: "Pirate",
+                    8: "Explorer",
+                    9: "Astronaut",
+                    10: "Knight",
+                    11: "Fairy",
+                    12: "Detective",
+                    13: "Villager",
+                    14: "Queen",
+                    15: "Cyber Ninja",
+                    16: "Mermaid",
+                };
                 let opctions='';
                 for (let i=1; i<= Object.keys(charAvatar).length; i++){
+                    const avatarName = avatarNames[i] || `Character ${i}`;
 
                     opctions += ` <!-- Avatar ${i} -->
                     <input type="radio" id="avatar${i}" name="player_avatar" value="${i}" required>
                     <label for="avatar${i}">
                     <canvas id="canvas${i}" width="256" height="256"></canvas>
+                    <span class="avatarName">${avatarName}</span>
                     </label>`
                 }
                 
                 return opctions;
         }
         playerAvtar_container.classList.remove('hide');
+    }
+    #showGameMessage(message){
+        const { gameStartMessage } = this.#elemts;
+        if (!gameStartMessage) return;
+
+        clearTimeout(this.#gameMessageTimer);
+        gameStartMessage.innerText = message;
+        gameStartMessage.classList.remove('hide');
+
+        this.#gameMessageTimer = setTimeout(() => {
+            gameStartMessage.classList.add('hide');
+        }, 1800);
     }
 }
 

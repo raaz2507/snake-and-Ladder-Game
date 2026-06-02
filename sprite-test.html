@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sprite Animation Test</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #f5f5f5;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    main {
+      width: min(100%, 980px);
+      display: grid;
+      gap: 16px;
+    }
+
+    .stage {
+      min-height: 560px;
+      display: grid;
+      place-items: end center;
+      overflow: hidden;
+      border: 1px solid #2d2d2d;
+      border-radius: 8px;
+      background:
+        linear-gradient(45deg, #202020 25%, transparent 25%),
+        linear-gradient(-45deg, #202020 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #202020 75%),
+        linear-gradient(-45deg, transparent 75%, #202020 75%),
+        #171717;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+      background-size: 20px 20px;
+    }
+
+    canvas {
+      width: min(84vw, 420px);
+      height: auto;
+      image-rendering: auto;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      border: 1px solid #2d2d2d;
+      border-radius: 8px;
+      background: #181818;
+    }
+
+    button,
+    label {
+      min-height: 38px;
+      border: 1px solid #3a3a3a;
+      border-radius: 7px;
+      background: #232323;
+      color: #f5f5f5;
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    label {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    input[type="range"] {
+      width: 150px;
+    }
+
+    .meta {
+      text-align: center;
+      color: #cfcfcf;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="stage">
+      <canvas id="sprite" width="500" height="500"></canvas>
+    </div>
+
+    <div class="controls">
+      <button id="toggle" type="button">Pause</button>
+      <button id="flip" type="button">Flip</button>
+      <label>
+        Speed
+        <input id="speed" type="range" min="4" max="20" value="10">
+        <span id="speedValue">10 fps</span>
+      </label>
+      <label>
+        Scale
+        <input id="scale" type="range" min="40" max="120" value="70">
+        <span id="scaleValue">70%</span>
+      </label>
+    </div>
+
+    <div class="meta" id="meta">Loading sprite...</div>
+  </main>
+
+  <script>
+    const spritePath = "img/player-yellow-saree-moonwalk-right-only-transparent.png";
+    const frameCount = 8;
+    const columns = 8;
+    const rows = 1;
+    const frameWidth = 254;
+    const frameHeight = 772;
+    const canvas = document.getElementById("sprite");
+    const ctx = canvas.getContext("2d");
+    const toggleButton = document.getElementById("toggle");
+    const flipButton = document.getElementById("flip");
+    const speedInput = document.getElementById("speed");
+    const scaleInput = document.getElementById("scale");
+    const speedValue = document.getElementById("speedValue");
+    const scaleValue = document.getElementById("scaleValue");
+    const meta = document.getElementById("meta");
+    const image = new Image();
+
+    let frame = 0;
+    let lastTick = 0;
+    let playing = true;
+    let flipped = false;
+    let fps = Number(speedInput.value);
+    function resizeCanvas() {
+      const scale = Number(scaleInput.value) / 100;
+      canvas.style.width = `${Math.round(frameWidth * scale)}px`;
+      scaleValue.textContent = `${scaleInput.value}%`;
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.save();
+
+      if (flipped) {
+        ctx.translate(canvas.width, 0);
+        ctx.scale(-1, 1);
+      }
+
+      const sourceX = (frame % columns) * frameWidth;
+      const sourceY = Math.floor(frame / columns) * frameHeight;
+
+      ctx.drawImage(image, sourceX, sourceY, frameWidth, frameHeight, 0, 0, canvas.width, canvas.height);
+
+      ctx.restore();
+    }
+
+    function loop(time) {
+      if (playing && time - lastTick >= 1000 / fps) {
+        frame = (frame + 1) % frameCount;
+        lastTick = time;
+        draw();
+      }
+
+      requestAnimationFrame(loop);
+    }
+
+    image.onload = () => {
+      canvas.width = frameWidth;
+      canvas.height = frameHeight;
+      resizeCanvas();
+      draw();
+      meta.textContent = `${frameCount} frames | ${columns} x ${rows} layout | ${image.width} x ${image.height}px sheet | ${frameWidth} x ${frameHeight}px per frame`;
+      requestAnimationFrame(loop);
+    };
+
+    image.onerror = () => {
+      meta.textContent = "Sprite image load nahi hui. File path check karo.";
+    };
+
+    toggleButton.addEventListener("click", () => {
+      playing = !playing;
+      toggleButton.textContent = playing ? "Pause" : "Play";
+    });
+
+    flipButton.addEventListener("click", () => {
+      flipped = !flipped;
+      draw();
+    });
+
+    speedInput.addEventListener("input", () => {
+      fps = Number(speedInput.value);
+      speedValue.textContent = `${fps} fps`;
+    });
+
+    scaleInput.addEventListener("input", resizeCanvas);
+
+    image.src = spritePath;
+  </script>
+</body>
+</html>

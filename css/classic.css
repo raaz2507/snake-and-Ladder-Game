@@ -1,0 +1,168 @@
+@import url('style.css');
+
+@font-face {
+    font-family: 'CREATURE_PERSONAL_USE';
+    src: url('../fonts/CREATURE_PERSONAL_USE.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'MegaSnake';
+    src: url('../fonts/MegaSnake-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.diceBlock{
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.player{
+    position: absolute;
+    width: 8vmin;
+    height: 8vmin;
+    z-index: 3;
+    transform-origin: center center;
+}
+
+.player::after{
+    content: attr(data-player-name);
+    background-color: var(--tooltip-bg);
+    color: var(--tooltip-text);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1vmin;
+    white-space: nowrap;
+}
+
+.playerNameTooltip{
+    position: absolute;
+    z-index: 4;
+    transform: translate(-50%, -100%);
+    padding: 2px 6px;
+    border-radius: 4px;
+    background-color: var(--tooltip-bg);
+    color: var(--tooltip-text);
+    font-size: 1.4vmin;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-weight: 700;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: left 0.35s linear, top 0.35s linear;
+}
+
+#plateform,
+#completePlateform{
+    background-color: var(--start-platform-bg);
+    box-shadow: inset 1px 1px 13px -1px var(--start-platform-shadow);
+    border-radius: 10px;
+    width: 20vmin;
+    height: 20vmin;
+    padding: 12px 6px;
+    position: absolute;
+    right: 100%;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+#completePlateform{
+    right: 100%;
+    left: auto;
+    top: 0;
+    bottom: auto;
+    background-color: var(--finish-platform-bg);
+    box-shadow: inset 1px 1px 13px -1px var(--finish-platform-shadow);
+}
+
+#plateform::after{
+    content: 'START';
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    font-size: 3vmin;
+    font-weight: 800;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: rgba(245, 245, 245, 0.4);
+}
+
+#completePlateform::after{
+    content: 'FINISH';
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    font-size: 3vmin;
+    font-weight: 800;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: rgba(245, 245, 245, 0.4);
+}
+
+.gameStartMessage{
+    position: fixed;
+    top: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(90vw, 32rem);
+    min-height: 4rem;
+    padding: 1rem 1.5rem;
+    z-index: 7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--theme-control-border);
+    border-radius: 10px;
+    background: var(--panel-bg);
+    color: var(--text-color);
+    box-shadow: 0 12px 32px var(--panel-shadow);
+    font-size: 1.4rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 800;
+    text-align: center;
+    backdrop-filter: blur(var(--page-blur));
+    animation: messagePop 0.18s ease-out;
+}
+
+@keyframes messagePop{
+    from{
+        opacity: 0;
+        transform: translate(-50%, -0.75rem);
+    }
+    to{
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+.finishMessage{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20vmin;
+    font-family: 'MegaSnake';
+    letter-spacing: 5px;
+    color: skyblue;
+}
+
+.testDiv{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+}

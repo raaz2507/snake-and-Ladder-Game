@@ -4,169 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snake and Leader</title>
+    <link rel="stylesheet" href="./css/classic.css">
 </head>
-<link rel="stylesheet" href="./css/style.css">
-<style>
-    @font-face {
-        font-family: 'CREATURE_PERSONAL_USE';
-        src: url('./fonts/CREATURE_PERSONAL_USE.ttf') format('truetype');
-        font-weight: normal;
-        font-style: normal;
-    }
-    @font-face {
-        font-family: 'MegaSnake';
-        src: url('./fonts/MegaSnake-Regular.ttf') format('truetype');
-        font-weight: normal;
-        font-style: normal;
-    }
-    /* *{ border: 1px solid red !important;} */
-    
-    .diceBlock{
-        width:100%;
-        height: 100%;
-        /* border: 1px solid red; */
-        padding: 1rem;
-        /* text-align: center; */
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-    }
-.player{
-    position: absolute;
-    width:8vmin;
-    height: 8vmin;
-    z-index: 3;
-    transform-origin: center center;
-    border: 1px solid  red;
-}
-.player::after{
-    content: attr(data-player-name);
-    background-color: skyblue;
-    position: absolute;
-    bottom:100%;
-    left:50%;
-    transform: translateX(-50%);
-    font-size: 1vmin;
-    white-space: nowrap;
-}
-.playerNameTooltip{
-    position: absolute;
-    z-index: 4;
-    transform: translate(-50%, -100%);
-    padding: 2px 6px;
-    border-radius: 4px;
-    background-color: skyblue;
-    color: #123;
-    font-size: 1.4vmin;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    font-weight: 700;
-    white-space: nowrap;
-    pointer-events: none;
-    transition: left 0.35s linear, top 0.35s linear;
-}
-#plateform, #completePlateform{
-    background-color: rgba(255, 192, 203, 0.8);
-    box-shadow: inset 1px 1px 13px -1px rgb(255, 139, 159);
-    border-radius: 10px;
-    width: 20vmin;
-    height: 20vmin;
-    padding: 12px 6px;
-    position: absolute;
-    right:100%;
-    bottom:0;
-    display: flex;                /* flex activate */
-  justify-content: center;      /* horizontally center */
-  flex-wrap: wrap;
-  align-items: center;          /* vertically center */
-}
-#completePlateform{
-    right:100%;
-    left:auto;
-    top:0;
-    bottom:auto;
-    background-color: rgba(135, 206, 250, 0.8);
-    box-shadow: inset 1px 1px 13px -1px rgb(77, 166, 225);
-}
-#plateform:after{
-    content: 'START';
-    writing-mode: vertical-rl;
-    text-orientation: upright;
-    font-size: 3vmin;
-    font-weight: 800;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    color: rgba(245, 245, 245, 0.4);
-}
-#completePlateform:after{
-    content: 'FINISH';
-    writing-mode: vertical-rl;
-    text-orientation: upright;
-    font-size: 3vmin;
-    font-weight: 800;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    color: rgba(245, 245, 245, 0.4);
-}
-.gameStartMessage{
-    position: fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height: 100%;
-    
-    z-index: 5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20vmin;
-    font-family: 'CREATURE_PERSONAL_USE';
-    color:greenyellow;
-    text-shadow: 1px 1px 15px green;
-    text-shadow: 
-        -2px -1px 5px green,  
-         2px -1px 5px green,
-        -2px  1px 5px green,
-         2px  1px 5px green; /* चारों तरफ काला border */
-    backdrop-filter: blur(2px);
-    background-color: rgba(157, 235, 135, 0.219);
-}
-.finishMessage{
-    position: fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height: 100%;
-    z-index: 5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20vmin;
-    font-family: 'MegaSnake';
-    letter-spacing: 5px;
-    color: skyblue;
-}
-.testDiv{
-    position: fixed;
-    top:0;
-    left:0;
-    width:100px;
-    height: 100px;
-}
-</style>
 <body>
     <div class="blur"></div>
     <header>Snake and Leader</header>
     <main>
         <aside>
             <div class="playerTurnInfo">Player 1's Turn</div>
+            <div class="themeSelector" aria-label="Theme selection">
+                <p>Theme</p>
+                <div class="themeButtons">
+                    <button class="themeBtn" type="button" data-theme-value="light">Light</button>
+                    <button class="themeBtn" type="button" data-theme-value="dark">Dark</button>
+                    <button class="themeBtn" type="button" data-theme-value="forest">Forest</button>
+                    <button class="themeBtn" type="button" data-theme-value="neon">Neon</button>
+                    <button class="themeBtn" type="button" data-theme-value="royal">Royal</button>
+                    <button class="themeBtn" type="button" data-theme-value="candy">Candy</button>
+                    <button class="themeBtn" type="button" data-theme-value="classic">Classic</button>
+                    <button class="themeBtn" type="button" data-theme-value="jungle">Jungle</button>
+                    <button class="themeBtn" type="button" data-theme-value="ocean">Ocean</button>
+                    <button class="themeBtn" type="button" data-theme-value="sunset">Sunset</button>
+                    <button class="themeBtn" type="button" data-theme-value="minimal">Minimal</button>
+                </div>
+            </div>
             <div class="fullScrenTogleBtnBlock">
-                <p>Enter Full Screen</p>
+                <p id="toggleScreenText">Enter Full Screen</p>
                 <button id="toggleScreenBtn">
                     <img src="./img/expand-solid-full.svg" alt="exend" title="Full Screen" id="toggleScreenBtnImg">
                 </button>
             </div>
-            
-                
                 
             <label for="diceToggleBtn" class="switch" >
                 <input type="checkbox" name="" id="diceToggleBtn" aria-checked="false" checked>
@@ -205,13 +72,24 @@
     <footer>&copy; Snake and Leader Game | Made with <a href="./img/cupple.gif" target="_blank">❤️</a> for Rashi. </footer>
 
 
+    <div id="newGameConfirmDialog" class="confirmDialog hide" role="dialog" aria-modal="true" aria-labelledby="newGameConfirmTitle">
+        <div class="confirmDialogBox">
+            <h2 id="newGameConfirmTitle">Start New Game?</h2>
+            <p>Current game progress will be replaced.</p>
+            <div class="confirmDialogActions">
+                <button type="button" id="cancelNewGameBtn" class="confirmDialogBtn secondary">Cancel</button>
+                <button type="button" id="confirmNewGameBtn" class="confirmDialogBtn primary">Start</button>
+            </div>
+        </div>
+    </div>
+
     <!-- pop up box start  -->
  <div id="newPlayerCard" class="hide">
         <!-- player Count container -->
 
         <div id="playerCount_container" class="player-container_base">
             <form action="" name="playerCountForm" method="GET">
-                <label for="player_count" class='player_count_label'>Select Players</label>
+                <label for="player_count" class='player_count_label'>Choose Number of Players</label>
                 <div id="player_countDis">Players: 1</div>
                 <input type="range" id="player_count" min="1" max="4" step="1" value="1" list="tickmarks">
                 
@@ -229,59 +107,6 @@
         <div id="playerAvtar_container" class="player-container_base  hide"></div>
 
     </div>
-
-<!-- pop up box end  -->
- <!-- game start dilod -->
-<div class="gameStartMessage hide">Game Started </div>
-<div class="finishMessage hide"> Khushi finish the Game</div>
-
-
-
-div.testDiv*1000
-<script type="module" src="./js/script.js"></script></script>   
-<script>
-   
-    //  document.addEventListener("click", function(event) {
-    //     let x = event.clientX; // screen me horizontal position
-    //     let y = event.clientY; // screen me vertical position
-    //     console.log("X: " + x + ", Y: " + y);
-    // });
-</script>
+<script type="module" src="./js/script.js"></script>   
 </body>
 </html>
-
-
-
-<!-- <form action="" name="player_avatarForm" method="GET">
-                <label for="playerName" class="playerNameLabel">Enter Player Name </label>
-                <input type="text" name="playerName" id="playerName" placeholder="palyer_1" value="player_1">
-            
-                <label for="chouseAvtar">Chouse Character for your player</label>
-                <div class="avatar-options">
-                -->             
-                    <!-- Avatar 1 -->
-                    <!-- <input type="radio" id="avatar1" name="player_avatar" value="avatar1" >
-                    <label for="avatar1">
-                    <canvas id="canvas1" width="256" height="256"></canvas>
-                    </label> -->
-
-                    <!-- Avatar 2 -->
-                    <!-- <input type="radio" id="avatar2" name="player_avatar" value="avatar2" checked>
-                    <label for="avatar2">
-                    <canvas id="canvas2" width="256" height="256"></canvas>
-                    </label> -->
-
-                    <!-- Avatar 3 -->
-                    <!-- <input type="radio" id="avatar3" name="player_avatar" value="avatar3">
-                    <label for="avatar3">
-                    <canvas id="canvas3" width="256" height="256"></canvas>
-                    </label> -->
-                    <!-- Avatar 4 -->
-                    <!-- <input type="radio" id="avatar4" name="player_avatar" value="avatar4">
-                    <label for="avatar4">
-                    <canvas id="canvas4" width="256" height="256"></canvas>
-                    </label> 
-                   
-                </div>
-                <button type="submit">Start....</button>
-            </form> -->

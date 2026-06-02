@@ -3,11 +3,11 @@
 /* 🎮 Sidebar */
 aside {
     flex-basis: 20%;
-    background: linear-gradient(to bottom, #fce4ec, #f8bbd0);
+    background: var(--panel-bg);
     padding: 20px;
-    border-right: 3px solid #ec407a;
+    border-right: 3px solid var(--panel-border);
     border-radius: 10px;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 0 10px var(--panel-shadow);
     font-family: 'Segoe UI', sans-serif;
     display: flex;
     flex-direction: column;
@@ -18,6 +18,7 @@ aside #diceInstructions{
   font-weight: bolder;
   font-family:'Courier New', Courier, monospace;
   font-style: italic;
+  color: var(--text-color);
 }
 /* 🎲 Dice area  start*/
   #dice {
@@ -57,7 +58,7 @@ aside #diceInstructions{
     align-items: center;
     justify-content: space-evenly;
     gap: 5px;
-    background-color: rgba(245, 245, 245, 0.7);
+    background-color: var(--theme-control-bg);
     box-shadow: 0 0 20px rgba(0, 0, 0, .1);
    }
 
@@ -161,13 +162,48 @@ aside .playerTurnInfo {
     font-size: 1rem;
     font-weight: 600;
     text-align: center;
-    color: #00ff66; /* हरा रंग */
+    color: var(--turn-panel-text);
     letter-spacing: 2px;
     padding: 12px 10px;
     border-radius: 10px;
-    background: #008000cc;
-    text-shadow: 0 0 6px #00ff66, 0 0 12px #00ff66, 0 0 20px #00ff66;
+    background: var(--turn-panel-bg);
+    text-shadow: 0 0 6px var(--turn-panel-text), 0 0 12px var(--turn-panel-text), 0 0 20px var(--turn-panel-text);
     border: 1px solid rgba(255,255,255,0.1);
+}
+aside .themeSelector{
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--theme-control-border);
+  border-radius: 10px;
+  background: var(--theme-control-bg);
+  color: var(--text-color);
+  text-align: center;
+}
+aside .themeSelector p{
+  margin-bottom: 8px;
+  color: var(--muted-text-color);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+aside .themeButtons{
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+aside .themeBtn{
+  min-width: 3rem;
+  padding: 8px 10px;
+  border: 1px solid var(--theme-control-border);
+  border-radius: 8px;
+  background: var(--theme-button-bg);
+  color: var(--theme-button-text);
+  cursor: pointer;
+  font-weight: 700;
+}
+aside .themeBtn.active{
+  background: var(--theme-button-active-bg);
+  color: var(--theme-button-active-text);
 }
 aside .fullScrenTogleBtnBlock{
   text-align: center;
@@ -183,8 +219,8 @@ aside #toggleScreenBtn{
 
 /* start new game styling start */
 #startNewGameBtn {
-    background: linear-gradient(135deg, #ff6a00, #ffcc00);
-    color: white;
+    background: var(--primary-button-bg);
+    color: var(--primary-button-text);
     font-size: 1.2rem;
     font-weight: bold;
     padding: 12px 28px;
@@ -201,7 +237,7 @@ aside #toggleScreenBtn{
 
 /* Hover Effect */
 #startNewGameBtn:hover {
-    background: linear-gradient(135deg, #ffcc00, #ff6a00);
+    background: var(--primary-button-hover-bg);
     transform: translateY(-3px) scale(1.05);
     box-shadow: 0 6px 12px rgba(0,0,0,0.3);
 }

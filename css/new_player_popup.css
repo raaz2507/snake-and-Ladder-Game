@@ -1,8 +1,69 @@
 /* player Count Styling start*/
+.confirmDialog{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    inset: 0;
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    backdrop-filter: blur(var(--page-blur));
+    background-color: color-mix(in srgb, var(--board-border) 22%, transparent);
+}
+.confirmDialogBox{
+    width: min(92vw, 26rem);
+    padding: 1.5rem;
+    border: 1px solid var(--theme-control-border);
+    border-radius: 10px;
+    background: var(--panel-bg);
+    color: var(--text-color);
+    box-shadow: 0 18px 40px var(--panel-shadow);
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.confirmDialogBox h2{
+    margin-bottom: 0.6rem;
+    color: var(--text-color);
+    font-size: 1.6rem;
+}
+.confirmDialogBox p{
+    color: var(--muted-text-color);
+    font-weight: 700;
+}
+.confirmDialogActions{
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1.4rem;
+}
+.confirmDialogBtn{
+    min-width: 7rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--theme-control-border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 800;
+}
+.confirmDialogBtn.primary{
+    background: var(--primary-button-bg);
+    color: var(--primary-button-text);
+}
+.confirmDialogBtn.primary:hover{
+    background: var(--primary-button-hover-bg);
+}
+.confirmDialogBtn.secondary{
+    background: var(--theme-button-bg);
+    color: var(--theme-button-text);
+}
 #newPlayerCard{
     width:100%;
     height: 100%;
-    backdrop-filter: blur(3px);
+    backdrop-filter: blur(var(--page-blur));
+    background-color: color-mix(in srgb, var(--board-border) 18%, transparent);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -13,8 +74,8 @@
     z-index: 5;
 }
 #playerCount_container {
-    width: max-content;
-    padding: 2rem  11.5rem;
+    width: min(92vw, 34rem);
+    padding: 2rem 3rem;
     
 }
 #playerCount_container label[for="player_count"] {
@@ -22,7 +83,7 @@
     margin-bottom: 1rem;
     font-weight: bold;
     font-size: 1.8rem;
-    color: #333;
+    color: var(--text-color);
 }
 
 input[type=range] {
@@ -30,7 +91,7 @@ input[type=range] {
     appearance: none;
     height: 10px;
     border-radius: 5px;
-    background: linear-gradient(90deg, #4caf50, #2196f3);
+    background: var(--primary-button-bg);
     outline: none;
     margin-bottom: .5rem;
 }
@@ -39,14 +100,25 @@ input[type=range]::-webkit-slider-thumb {
     appearance: none;
     width: 20px;
     height: 20px;
-    background: #ff5722;
+    background: var(--theme-button-active-bg);
+    border: 2px solid var(--theme-button-active-text);
     border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 0 4px rgba(0,0,0,0.3);
+    box-shadow: 0 0 4px var(--panel-shadow);
     transition: 0.3s;
 }
 input[type=range]::-webkit-slider-thumb:hover {
     transform: scale(1.2);
+}
+input[type=range]::-moz-range-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--theme-button-active-bg);
+    border: 2px solid var(--theme-button-active-text);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 4px var(--panel-shadow);
 }
 
 datalist {
@@ -56,17 +128,18 @@ datalist {
     font-size: 14px;
     font-size: 1.3rem;
     font-weight: bold;
-    color: #444;
+    color: var(--muted-text-color);
 }
 
 #player_countDis {
     margin-bottom: 2rem;
     font-size: 1.3rem;
     font-weight: bold;
-    color: #2196f3;
-    background-color: whitesmoke;
+    color: var(--theme-button-active-text);
+    background: var(--theme-button-active-bg);
     padding: 15px 10px;
-    border-radius: 20px;
+    border-radius: 10px;
+    box-shadow: 0 6px 16px var(--panel-shadow);
 }
 form[name="playerCountForm"] button[type="submit"], form[name="player_avatarForm"] button[type="submit"]{
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -75,7 +148,16 @@ form[name="playerCountForm"] button[type="submit"], form[name="player_avatarForm
     font-style: italic;
     padding: .5rem 1rem;
     margin-top:2rem;
+    border: 1px solid var(--theme-control-border);
+    border-radius: 8px;
+    background: var(--primary-button-bg);
+    color: var(--primary-button-text);
+    cursor: pointer;
 
+}
+form[name="playerCountForm"] button[type="submit"]:hover,
+form[name="player_avatarForm"] button[type="submit"]:hover{
+    background: var(--primary-button-hover-bg);
 }
 /* player Count Styling end */
 
@@ -83,14 +165,18 @@ form[name="playerCountForm"] button[type="submit"], form[name="player_avatarForm
 
 .player-container_base{
     font-family: 'Poppins', sans-serif;
-    background-color: rgba(179, 255, 160, 0.753);
+    background: var(--panel-bg);
+    color: var(--text-color);
     text-align: center;
     border-radius: 10px;
-    box-shadow: 2px 1px 13px 3px rgba(26, 26, 26, 0.521) ;
+    border: 1px solid var(--panel-border);
+    box-shadow: 2px 1px 18px 3px var(--panel-shadow);
 }
 #playerAvtar_container {
     
-    width: max-content;
+    width: min(94vw, 58rem);
+    max-height: 90vh;
+    overflow: auto;
     /* margin: 30px auto; */
     padding: 2rem  2rem;
     
@@ -105,6 +191,7 @@ form[name="player_avatarForm"]{
 }
 label[for="playerName"]{
     font-size: 2rem;
+    color: var(--text-color);
     
 }
 input[name="playerName"]{
@@ -114,26 +201,31 @@ input[name="playerName"]{
     width: 13rem;
     padding: .5rem;
     border-radius: 8px;
-    background-color: rgba(245, 245, 245, 0.373);
-    color: rgb(255, 255, 255);
+    background: var(--theme-control-bg);
+    color: var(--text-color);
+    border: 1px solid var(--theme-control-border);
     
 }
 input[name="playerName"]:focus{
-    outline: 1px solid yellowgreen;
+    outline: 2px solid var(--theme-button-active-bg);
 }
 label[for="chouseAvtar"]{
     font-size: 1.5rem;
+    color: var(--muted-text-color);
 }
 .avatar-options {
   display: flex;
   align-items: center;
   justify-content: space-evenly;
+  flex-wrap: wrap;
   padding: 1rem 1rem;
-  border: 1px solid rgba(172, 255, 47, 0.353);
-  background-color: rgba(255, 255, 255, 0.38);
+  border: 1px solid var(--theme-control-border);
+  background: var(--theme-control-bg);
   border-radius: 10px;
   gap: 20px;
   margin-top: 15px;
+  max-height: 52vh;
+  overflow: auto;
 }
 
 .avatar-options input[type="radio"] {
@@ -146,17 +238,49 @@ label[for="chouseAvtar"]{
   border-radius: 10px;
   overflow: hidden;
   transition: 0.1s;
-  display: inline-block;
+  display: grid;
+  grid-template-rows: 6rem auto;
+  justify-items: center;
+  gap: 0.45rem;
   padding: 5px;
+}
+.avatarName{
+  display: block;
+  grid-row: 2;
+  min-width: 5.8rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 8px;
+  background: var(--theme-button-bg);
+  color: var(--theme-button-text);
+  font-size: 0.85rem;
+  font-weight: 800;
+  line-height: 1.1;
 }
 canvas{
     /* border: 1px solid red; */
+    display: block;
+    grid-row: 1;
     width: 6rem;
     height: 6rem;
 }
 .avatar-options input[type="radio"]:checked + label {
-  border: 3px solid #2196f3;
+  border: 3px solid var(--theme-button-active-bg);
   transform: scale(1.1);
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  box-shadow: 0 0 10px var(--panel-shadow);
+}
+.avatar-options input[type="radio"]:checked + label .avatarName {
+  background: var(--theme-button-active-bg);
+  color: var(--theme-button-active-text);
+}
+@media (max-width: 700px) {
+  #playerCount_container,
+  #playerAvtar_container {
+    width: min(92vw, 34rem);
+    padding: 1.4rem;
+  }
+
+  .avatar-options {
+    flex-wrap: wrap;
+  }
 }
 /* player Avtar popup box Styling end */

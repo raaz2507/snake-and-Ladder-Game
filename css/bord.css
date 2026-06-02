@@ -11,8 +11,8 @@
     height: var(--bordSize);
     /* aspect-ratio: 1; */
     /* margin: 0px auto; */
-    border: 2px solid #2e7d32;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+    border: 2px solid var(--board-border);
+    box-shadow: 0 0 15px var(--board-shadow);
     /* background-color: #f1f8e9; */
     position: relative;
 }
@@ -27,7 +27,7 @@
 /* flex setting end */
 
 #bord .box {
-    border: 1px solid #c8e6c9;
+    border: 1px solid var(--board-cell-border);
     font-size: 2.2vh;
     /* font-weight: bold; */
     /* aspect-ratio: 1; */
@@ -39,30 +39,30 @@
 
 /* 🟥 Alternate box color (chess-style) */
 #bord .box:nth-child(odd) {
-    background-color: #e8f5e9;
+    background-color: var(--board-cell-odd);
 }
 #bord .box:nth-child(even) {
-    background-color: #c8e6c9;
+    background-color: var(--board-cell-even);
 }
 
 /* 🖱️ On hover effect */
 #bord .box:hover {
     transform: scale(1.05);
     z-index: 1;
-    background-color: #a5d6a7;
+    background-color: var(--board-cell-hover);
     color: white;
     cursor: pointer;
 }
 
 .box.snake {
-    background-color: #f8bbd0; /* light pink */
-    color: #880e4f;
+    background-color: var(--snake-cell-bg);
+    color: var(--snake-cell-text);
     font-weight: bold;
     position: relative;
 }
 .box.ladder {
-    background-color: #c8e6c9; /* light green */
-    color: #1b5e20;
+    background-color: var(--ladder-cell-bg);
+    color: var(--ladder-cell-text);
     font-weight: bold;
     position: relative;
 }
@@ -80,7 +80,7 @@
 }
 
 .snakeImg, .leaderImg {
-    border:1px solid red;
+    /* border:1px solid red; */
     position: absolute;
     pointer-events: none;
     z-index: 2;

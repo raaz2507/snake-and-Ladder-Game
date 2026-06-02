@@ -1,0 +1,73 @@
+@import url('base.css');
+
+body, html{
+    width: 100%;
+    height: 100%;
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4rem;
+    background: url('../img/snake_skin.jpg') center;
+    background-size: cover;
+    backdrop-filter: blur(2px);
+}
+
+body::after{
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: -1;
+}
+
+.card{
+    padding: 1.5rem 0.8rem;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 1.7rem;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.01s;
+}
+
+.card a{
+    text-decoration: none;
+    color: rgb(255, 185, 186);
+    text-shadow: 0 0 6px white;
+}
+
+.card .imageFrame{
+    width: 30vmin;
+    height: 30vmin;
+}
+
+.card .imageFrame img{
+    width: 100%;
+    height: auto;
+    box-shadow: inset 0 0 13px -3px rgba(0, 0, 0, 0.664);
+    background-color: wheat;
+    border-radius: 10px;
+}
+
+.card .tag{
+    display: block;
+    margin: 1rem 0 0 0;
+}
+
+.card:hover{
+    transform: translateY(-8px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+}
+
+.card:hover .tag{
+    color: #0077ff;
+}
