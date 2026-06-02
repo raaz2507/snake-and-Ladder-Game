@@ -1,5 +1,5 @@
 header{
-        width:90%;
+        width:min(96%, 1280px);
         margin:0 auto;
 }
 header {
@@ -7,9 +7,9 @@ header {
     text-align: center;
     background: var(--header-bg);
     color: var(--header-text);
-    font-size: 3rem;
+    font-size: clamp(1.5rem, 4vw, 3rem);
     font-weight: bold;
-    padding: 20px 0;
+    padding: clamp(10px, 2vw, 20px) 0;
     text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
     letter-spacing: 3px;
     border-bottom: 5px solid var(--header-border);
@@ -19,4 +19,10 @@ header {
     position: sticky;
     top: 0;
     z-index: 4;
+}
+
+@media (max-width: 520px){
+    header{
+        letter-spacing: 1px;
+    }
 }

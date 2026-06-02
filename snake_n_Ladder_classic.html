@@ -4,17 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snake and Leader</title>
+    <link rel="icon" type="image/svg+xml" href="./img/icons/site-icon.svg">
     <link rel="stylesheet" href="./css/classic.css">
 </head>
 <body>
     <div class="blur"></div>
     <header>Snake and Leader</header>
     <main>
-        <aside>
-            <div class="playerTurnInfo">Player 1's Turn</div>
-            <div class="themeSelector" aria-label="Theme selection">
-                <p>Theme</p>
-                <div class="themeButtons">
+        <aside class="gameSidebar">
+            <button id="mobileOptionsToggle" class="mobileOptionsToggle" type="button" aria-expanded="false">
+                Show Options
+            </button>
+            <section class="sidebarSection turnSection">
+                <div class="playerTurnInfo">Player 1's Turn</div>
+            </section>
+            <section class="sidebarSection themeSelector collapsed" aria-label="Theme selection">
+                <button id="themeToggleBtn" class="themeToggleBtn" type="button" aria-expanded="false" aria-controls="themeButtons">
+                    <span>Theme</span>
+                    <span id="currentThemeLabel">Light</span>
+                </button>
+                <div id="themeButtons" class="themeButtons">
                     <button class="themeBtn" type="button" data-theme-value="light">Light</button>
                     <button class="themeBtn" type="button" data-theme-value="dark">Dark</button>
                     <button class="themeBtn" type="button" data-theme-value="forest">Forest</button>
@@ -27,21 +36,23 @@
                     <button class="themeBtn" type="button" data-theme-value="sunset">Sunset</button>
                     <button class="themeBtn" type="button" data-theme-value="minimal">Minimal</button>
                 </div>
-            </div>
-            <div class="fullScrenTogleBtnBlock">
+            </section>
+            <section class="sidebarSection fullScrenTogleBtnBlock">
                 <p id="toggleScreenText">Enter Full Screen</p>
                 <button id="toggleScreenBtn">
                     <img src="./img/expand-solid-full.svg" alt="exend" title="Full Screen" id="toggleScreenBtnImg">
                 </button>
-            </div>
+            </section>
                 
-            <label for="diceToggleBtn" class="switch" >
+            <section class="sidebarSection diceBlock">
+                <div class="diceHeader">
+                    <p id="diceInstructions">Tap to Roll Dice</p>
+                    <label for="diceToggleBtn" class="switch" >
                 <input type="checkbox" name="" id="diceToggleBtn" aria-checked="false" checked>
                 <div class="switch-btn"></div>
-            </label>
-            <div class="diceBlock">
+                    </label>
+                </div>
                 <!-- <div id="dice" >🎲</div> -->
-                <p id="diceInstructions">Tap to Roll Dice</p>
                 <div class="dice_container">
                     <div class="dice">
                         <div class="face front"></div>
@@ -61,11 +72,10 @@
                     <button value="5">5</button>
                     <button value="6">6</button>
                 </div>
-            </div>
-
-            
-            <!-- <img src="./img/cupple.gif" alt="" srcset=""> -->
-             <button id="startNewGameBtn">Start New Game</button>
+            </section>
+            <section class="sidebarSection startSection">
+                <button id="startNewGameBtn">Start New Game</button>
+            </section>
         </aside>
         <div id="bord"><div id="plateform"></div><div id="completePlateform"></div></div>
     </main>

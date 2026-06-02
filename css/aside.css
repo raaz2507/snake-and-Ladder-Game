@@ -1,269 +1,404 @@
 @import url('./dice_style.css');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-/* 🎮 Sidebar */
-aside {
-    flex-basis: 20%;
-    background: var(--panel-bg);
-    padding: 20px;
+.gameSidebar{
+    width: min(100%, 19rem);
+    min-width: 16rem;
+    padding: clamp(0.75rem, 2vw, 1.25rem);
     border-right: 3px solid var(--panel-border);
     border-radius: 10px;
+    background: var(--panel-bg);
     box-shadow: 2px 0 10px var(--panel-shadow);
+    color: var(--text-color);
     font-family: 'Segoe UI', sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.85rem;
+    align-content: start;
+    overflow: visible;
 }
-aside #diceInstructions{
-  font-weight: bolder;
-  font-family:'Courier New', Courier, monospace;
-  font-style: italic;
-  color: var(--text-color);
+
+.sidebarSection{
+    width: 100%;
+    min-width: 0;
 }
-/* 🎲 Dice area  start*/
-  #dice {
-      width:5rem;
-      height: 5rem;
-      display: inline-block;
-      font-size: 5rem;
-      font-weight: bold;
-      color: #d81b60;
-      /* box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1); */
-      /* background-color: #fff; */
-      /* border: 3px solid #ec407a; */
-      /* border-radius: 10px; */
-      cursor: pointer;
-      transition: transform 0.15s ease;
-      /* flex setting */
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
 
-  aside #dice:hover {
-      transform: scale(1.1);
-      /* background-color: #fce4ec; */
-  } 
-/* dice area End */
-
-
-/* manualy Dice Role start */
-  #manualDiceRoll{
-    /* border: 1px solid red; */
-    padding: 12px 6px;
+.mobileOptionsToggle{
+    display: none;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--theme-control-border);
     border-radius: 10px;
-    /* flex setting */
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-evenly;
-    gap: 5px;
-    background-color: var(--theme-control-bg);
-    box-shadow: 0 0 20px rgba(0, 0, 0, .1);
-   }
-
-   #manualDiceRoll button{
-    width: 4rem;
-    height: 4rem;
-    font-size: 2rem;
-    background-color: hsla(0, 0%, 96%, 0.5);
-    border-radius: 10px;
-    box-shadow: 1px 1px 9px -4px rgba(0, 0, 0, 0.7);
-    transition: background .02s ease;
-   }
-   
-   #manualDiceRoll button:active{
-    background-color: rgba(43, 255, 0, 0.26);
-    box-shadow: 1px 1px 4px -4px rgba(0, 0, 0, 0.7);
-   }
-
-/* manualy Dice Role end */
-
-
-/* dice switch btn styling start */
-  .switch{
+    background: var(--theme-button-bg);
+    color: var(--theme-button-text);
     cursor: pointer;
-  }
-  .switch-btn{
-    content: '🎲';
-    width:6rem;
-    height: 3rem;
-    background-color: #de3f3f;
-    position: relative;
-    /* cursor: pointer; */
-    border-radius: 2rem;
-    box-shadow: inset 0 10px 10px rgba(0,0,0,0.3);
-    transition: background-color 0.3s ease;
-  }
-  .switch-btn:before{
-    content: "";
-    position: absolute;
-    height: 2.6rem;
-    width:2.6rem;
-    background: linear-gradient(#FFF, #cdcdcd);
-    left: 0.2rem;
-    top: 0.2rem;
-    /* transition: all 0.3s ease; */
-    transition: transform 0.3s ease, background-color 0.3s ease;
-    transform: translateX(0);
-      /* transform: scale(0.9); */
-    border-radius: 50%;
-    box-shadow: 0 8px 6px -4px rgba(0,0,0, 0.25);
-  }
-  input[type=checkbox] {
-      /* display: none; */
-      position: absolute;
-      opacity: 0;
-      width: 0;
-      height: 0;
-  }
-  input[type=checkbox]:checked + .switch-btn:before{
-      /* left:4.2rem; */
-      transform: translateX(3rem);
-      /* background: linear-gradient(135deg, #47CB8F, #2ecc71); */
-      box-shadow: 0 0 8px #47CB8F;
-  }
-  input[type=checkbox]:checked + .switch-btn{
-      background-color: #47CB8F; 
-      /* #64ff64; */
-  }
-  /* input[type=checkbox]:focus + .switch-btn{
-      box-shadow: 0 0 0 3px rgba(71,203,143,0.5);
-  } */
-  .switch-btn::after{
-    content: "🎲";   /* default */
-    position: absolute;
-    right: 0.2rem;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #666;
-    pointer-events: none;
-    transition: color 0.3s ease, content 0.2s ease;
-  }
+    font-weight: 800;
+}
 
-  input[type=checkbox]:checked + .switch-btn::after {
-    content: "🛢️";
-    color: white;
-    transform: translate(40%, -50%);
-    left:0.2rem;
-    right: auto;  
-  }
-/* dice switch btn styling end  */
-
-
-
-
-/* Future elements */
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-aside .playerTurnInfo {
-    font-family: 'Share Tech Mono', monospace; /* 7-seg look वाला font */
-    font-size: 1rem;
-    font-weight: 600;
-    text-align: center;
-    color: var(--turn-panel-text);
-    letter-spacing: 2px;
+.playerTurnInfo{
+    width: 100%;
     padding: 12px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 10px;
     background: var(--turn-panel-bg);
+    color: var(--turn-panel-text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-align: center;
     text-shadow: 0 0 6px var(--turn-panel-text), 0 0 12px var(--turn-panel-text), 0 0 20px var(--turn-panel-text);
-    border: 1px solid rgba(255,255,255,0.1);
 }
-aside .themeSelector{
-  width: 100%;
-  padding: 10px;
-  border: 1px solid var(--theme-control-border);
-  border-radius: 10px;
-  background: var(--theme-control-bg);
-  color: var(--text-color);
-  text-align: center;
+
+.themeSelector{
+    padding: 10px;
+    border: 1px solid var(--theme-control-border);
+    border-radius: 10px;
+    background: var(--theme-control-bg);
 }
-aside .themeSelector p{
-  margin-bottom: 8px;
-  color: var(--muted-text-color);
-  font-size: 0.9rem;
-  font-weight: 700;
+
+.themeToggleBtn{
+    width: 100%;
+    min-width: 0;
+    padding: 8px 10px;
+    border: 1px solid var(--theme-control-border);
+    border-radius: 8px;
+    background: var(--theme-button-bg);
+    color: var(--theme-button-text);
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, auto) auto;
+    align-items: center;
+    gap: 0.55rem;
+    font-weight: 800;
 }
-aside .themeButtons{
-  display: flex;
-  justify-content: center;
-  gap: 6px;
-  flex-wrap: wrap;
+
+.themeToggleBtn span{
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
-aside .themeBtn{
-  min-width: 3rem;
-  padding: 8px 10px;
-  border: 1px solid var(--theme-control-border);
-  border-radius: 8px;
-  background: var(--theme-button-bg);
-  color: var(--theme-button-text);
-  cursor: pointer;
-  font-weight: 700;
+
+.themeToggleBtn::after{
+    content: 'v';
 }
-aside .themeBtn.active{
-  background: var(--theme-button-active-bg);
-  color: var(--theme-button-active-text);
+
+.themeSelector:not(.collapsed) .themeToggleBtn::after{
+    content: '^';
 }
-aside .fullScrenTogleBtnBlock{
-  text-align: center;
-  /* display: flex;
-  align-items: center;
-  justify-content: center; */
+
+.themeButtons{
+    max-height: 12rem;
+    margin-top: 8px;
+    overflow: auto;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
 }
-aside #toggleScreenBtn{
+
+.themeSelector.collapsed .themeButtons{
+    display: none;
+}
+
+.themeBtn{
+    min-width: 3rem;
+    padding: 8px 10px;
+    border: 1px solid var(--theme-control-border);
+    border-radius: 8px;
+    background: var(--theme-button-bg);
+    color: var(--theme-button-text);
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.themeBtn.active{
+    background: var(--theme-button-active-bg);
+    color: var(--theme-button-active-text);
+}
+
+.fullScrenTogleBtnBlock{
+    padding: 10px;
+    border: 1px solid var(--theme-control-border);
+    border-radius: 10px;
+    background: var(--theme-control-bg);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.fullScrenTogleBtnBlock p{
+    margin: 0;
+    color: var(--muted-text-color);
+    font-weight: 700;
+}
+
+#toggleScreenBtn{
     width: 3rem;
     height: 3rem;
-    margin: 1rem 0;
+    border: 1px solid var(--theme-control-border);
+    border-radius: 8px;
+    background: var(--theme-button-bg);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
 }
 
-/* start new game styling start */
-#startNewGameBtn {
+#toggleScreenBtn img{
+    width: 1.35rem;
+    height: 1.35rem;
+}
+
+.diceBlock{
+    padding: 10px;
+    border: 1px solid var(--theme-control-border);
+    border-radius: 10px;
+    background: var(--theme-control-bg);
+    display: grid;
+    justify-items: center;
+    gap: 0.85rem;
+    overflow: visible;
+}
+
+.diceHeader{
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+#diceInstructions{
+    margin: 0;
+    color: var(--text-color);
+    font-family: 'Courier New', Courier, monospace;
+    font-style: italic;
+    font-weight: 800;
+    text-align: left;
+}
+
+.diceBlock .dice_container{
+    display: grid;
+    place-items: center;
+    width: max-content;
+    max-width: 100%;
+    min-height: 9rem;
+    margin: 0 auto;
+    overflow: visible;
+}
+
+.diceBlock .dice_container.hide{
+    display: none !important;
+}
+
+#manualDiceRoll{
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    background: var(--theme-control-bg);
+    box-shadow: 0 0 20px rgba(0, 0, 0, .1);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(2.6rem, 1fr));
+    gap: 0.45rem;
+}
+
+#manualDiceRoll.hide{
+    display: none !important;
+}
+
+#manualDiceRoll button{
+    min-height: 3rem;
+    border: 1px solid var(--theme-control-border);
+    border-radius: 10px;
+    background: var(--theme-button-bg);
+    color: var(--theme-button-text);
+    cursor: pointer;
+    font-size: 1.5rem;
+    font-weight: 800;
+    box-shadow: 1px 1px 9px -4px rgba(0, 0, 0, 0.7);
+}
+
+#manualDiceRoll button:active{
+    background: var(--theme-button-active-bg);
+    color: var(--theme-button-active-text);
+}
+
+.switch{
+    width: 6rem;
+    height: 3rem;
+    cursor: pointer;
+    display: block;
+}
+
+.switch input[type=checkbox]{
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.switch-btn{
+    width: 6rem;
+    height: 3rem;
+    border-radius: 2rem;
+    background-color: #de3f3f;
+    position: relative;
+    box-shadow: inset 0 10px 10px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease;
+}
+
+.switch-btn::before{
+    content: "";
+    position: absolute;
+    width: 2.6rem;
+    height: 2.6rem;
+    left: 0.2rem;
+    top: 0.2rem;
+    border-radius: 50%;
+    background: linear-gradient(#fff, #cdcdcd);
+    box-shadow: 0 8px 6px -4px rgba(0, 0, 0, 0.25);
+    transform: translateX(0);
+    transition: transform 0.3s ease;
+}
+
+.switch-btn::after{
+    content: "D";
+    position: absolute;
+    right: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    font-size: 1rem;
+    font-weight: 900;
+}
+
+.switch input[type=checkbox]:checked + .switch-btn{
+    background-color: #47cb8f;
+}
+
+.switch input[type=checkbox]:checked + .switch-btn::before{
+    transform: translateX(3rem);
+    box-shadow: 0 0 8px #47cb8f;
+}
+
+.switch input[type=checkbox]:checked + .switch-btn::after{
+    content: "M";
+    left: 0.8rem;
+    right: auto;
+    color: white;
+}
+
+.startSection{
+    display: grid;
+    justify-items: center;
+}
+
+#startNewGameBtn{
+    width: min(100%, 18rem);
+    margin: 0;
+    padding: 12px 22px;
+    border: 0;
+    border-radius: 12px;
     background: var(--primary-button-bg);
     color: var(--primary-button-text);
-    font-size: 1.2rem;
-    font-weight: bold;
-    padding: 12px 28px;
-    border: none;
-    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    margin: 20px auto;
-    display: block;  /* Center button */
-    text-transform: uppercase;
+    font-size: 1.05rem;
+    font-weight: 800;
     letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: normal;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
-/* Hover Effect */
-#startNewGameBtn:hover {
+#startNewGameBtn:hover{
     background: var(--primary-button-hover-bg);
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Active/Pressed Effect */
-#startNewGameBtn:active {
+#startNewGameBtn:active{
     transform: translateY(1px) scale(0.98);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
-/* start new game styling end */
 
-
-/* flex setting start */
-aside{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-/* flex setting end */
 @media only screen and (orientation: portrait){
-  aside{  flex-direction: row;}
+    .gameSidebar{
+        width: 100%;
+        min-width: 0;
+        border-right: 0;
+        border-top: 3px solid var(--panel-border);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: start;
+    }
+
+    .turnSection,
+    .themeSelector,
+    .diceBlock,
+    .startSection{
+        grid-column: 1 / -1;
+    }
 }
-@media (max-width: 600px) {
-    #startNewGameBtn {
-        font-size: 1rem;
-        padding: 10px 20px;
+
+@media (max-width: 600px){
+    .gameSidebar{
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.65rem;
+        padding: 10px;
+    }
+
+    .mobileOptionsToggle{
+        display: block;
+        order: 1;
+    }
+
+    .diceBlock{
+        order: 2;
+    }
+
+    .turnSection,
+    .themeSelector,
+    .fullScrenTogleBtnBlock,
+    .startSection{
+        display: none;
+        order: 3;
+    }
+
+    .gameSidebar.optionsOpen .turnSection,
+    .gameSidebar.optionsOpen .themeSelector,
+    .gameSidebar.optionsOpen .fullScrenTogleBtnBlock,
+    .gameSidebar.optionsOpen .startSection{
+        display: grid;
+    }
+
+    .fullScrenTogleBtnBlock,
+    .diceBlock,
+    .themeSelector{
+        padding: 8px;
+    }
+
+    .themeBtn{
+        min-width: 0;
+        padding: 7px 8px;
+        font-size: 0.85rem;
+    }
+
+    .diceHeader{
+        grid-template-columns: minmax(0, 1fr);
+        justify-items: center;
+    }
+
+    #diceInstructions{
+        text-align: center;
+    }
+
+    .diceBlock .dice_container{
+        min-height: 8rem;
+    }
+
+    .switch{
+        transform: scale(0.88);
+        transform-origin: center;
     }
 }

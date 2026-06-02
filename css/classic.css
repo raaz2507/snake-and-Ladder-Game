@@ -14,6 +14,10 @@
     font-style: normal;
 }
 
+:root{
+    --platformSize: clamp(4.5rem, 18vmin, 8rem);
+}
+
 .diceBlock{
     width: 100%;
     height: 100%;
@@ -66,8 +70,8 @@
     background-color: var(--start-platform-bg);
     box-shadow: inset 1px 1px 13px -1px var(--start-platform-shadow);
     border-radius: 10px;
-    width: 20vmin;
-    height: 20vmin;
+    width: var(--platformSize);
+    height: var(--platformSize);
     padding: 12px 6px;
     position: absolute;
     right: 100%;
@@ -165,4 +169,61 @@
     left: 0;
     width: 100px;
     height: 100px;
+}
+
+@media (min-width: 901px), (orientation: landscape){
+    #bord{
+        margin-left: clamp(5rem, 20vmin, 12rem);
+    }
+}
+
+@media only screen and (orientation: portrait){
+    :root{
+        --bordSize: min(calc(96vw - var(--platformSize) - 0.75rem), 64vh);
+        --platformSize: clamp(3.8rem, 18vmin, 6rem);
+    }
+
+    #bord{
+        margin-left: calc(var(--platformSize) + 0.5rem);
+    }
+
+    #plateform,
+    #completePlateform{
+        padding: 6px;
+        right: 100%;
+        left: auto;
+        z-index: 3;
+    }
+
+    #plateform{
+        bottom: 0;
+    }
+
+    #completePlateform{
+        top: 0;
+        bottom: auto;
+    }
+
+    #plateform::after,
+    #completePlateform::after{
+        font-size: clamp(0.75rem, 2.4vmin, 1.1rem);
+    }
+
+    .player{
+        width: clamp(2.2rem, 8vmin, 4rem);
+        height: clamp(2.2rem, 8vmin, 4rem);
+    }
+
+    .playerNameTooltip{
+        font-size: clamp(0.55rem, 1.8vmin, 0.85rem);
+    }
+}
+
+@media (max-width: 520px){
+    .gameStartMessage{
+        top: 0.75rem;
+        min-height: 3.25rem;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+    }
 }

@@ -2,10 +2,10 @@
 @import url('bord.css');
 
 main{
-    width:90%;
+    width:min(96%, 1280px);
     height: max-content;
     margin: 0 auto;
-    padding: 10px 0;
+    padding: 12px 0;
 }
 /* flex setting start */
    
@@ -13,12 +13,12 @@ main{
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-evenly;
-    gap: 1rem;
+    justify-content: center;
+    gap: clamp(0.75rem, 2vw, 1.5rem);
 }
 
 main aside{
-    flex-basis: 20%;
+    flex: 0 1 19rem;
 }
 
 /* main #bord{ flex-basis: 90vh;} */
@@ -29,13 +29,27 @@ main aside{
 @media only screen and (orientation: portrait){
     main{
         flex-direction: column;
+        width: min(96%, 760px);
+        gap: 0.8rem;
     }
     main aside{
         order:1;
+        width: 100%;
     }
 
     main #bord{
         order:0;
+    }
+}
+
+@media (max-width: 900px) and (orientation: landscape){
+    main{
+        width: 98%;
+        align-items: flex-start;
+    }
+
+    main aside{
+        flex-basis: 16rem;
     }
 }
 

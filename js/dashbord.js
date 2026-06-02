@@ -52,6 +52,8 @@ export class gameDashbord{
         this.#elemts['toggleScreenBtn'] = document.getElementById('toggleScreenBtn');
         this.#elemts['toggleBtnImg'] = document.getElementById('toggleScreenBtnImg');
         this.#elemts['toggleScreenText'] = document.getElementById('toggleScreenText');
+        this.#elemts['gameSidebar'] = document.querySelector('.gameSidebar');
+        this.#elemts['mobileOptionsToggle'] = document.getElementById('mobileOptionsToggle');
 
         this.#elemts['manualDiceRoll'] = document.getElementById('manualDiceRoll');
 
@@ -78,7 +80,7 @@ export class gameDashbord{
     
     
     #setEvents(){
-        const { dice ,dice_container, toggleScreenBtn, manualDiceRoll, diceToggleBtn }=this.#elemts;
+        const { dice ,dice_container, toggleScreenBtn, manualDiceRoll, diceToggleBtn, gameSidebar, mobileOptionsToggle }=this.#elemts;
         window.addEventListener('resize', () => {
             document.querySelectorAll('.snakeImg').forEach(el => el.remove()); // पुरानी images हटाओ
             document.querySelectorAll('.leaderImg').forEach(el => el.remove());
@@ -99,6 +101,12 @@ export class gameDashbord{
         });
         
         toggleScreenBtn.addEventListener('click', ()=> this.#toggleScreen() );
+
+        mobileOptionsToggle?.addEventListener('click', () => {
+            const isOpen = gameSidebar.classList.toggle('optionsOpen');
+            mobileOptionsToggle.innerText = isOpen ? 'Hide Options' : 'Show Options';
+            mobileOptionsToggle.setAttribute('aria-expanded', String(isOpen));
+        });
         
         manualDiceRoll.addEventListener('click', (event)=>{
             if (event.target.tagName === 'BUTTON'){
@@ -123,7 +131,10 @@ export class gameDashbord{
             }
         };
         const savedDiceMode = localStorage.getItem('diceMode');
-        if (savedDiceMode) {
+        const isSmallScreen = window.matchMedia('(max-width: 600px)').matches;
+        if (isSmallScreen) {
+            diceToggleBtn.checked = true;
+        } else if (savedDiceMode) {
             diceToggleBtn.checked = savedDiceMode === 'dice';
         }
         

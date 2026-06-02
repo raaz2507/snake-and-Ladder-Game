@@ -1,5 +1,5 @@
 :root{
-    --bordSize : 95vmin; /* vmin = min(vw, vh) */
+    --bordSize : min(72vh, 58vw);
 }
 #bord {
     display: grid;
@@ -15,6 +15,7 @@
     box-shadow: 0 0 15px var(--board-shadow);
     /* background-color: #f1f8e9; */
     position: relative;
+    flex: 0 0 auto;
 }
 
 /*flex setting start */
@@ -88,6 +89,26 @@
 }
 
 @media only screen and (orientation: portrait){
-  
+  :root{
+    --bordSize: min(88vw, 64vh);
+  }
+}
+
+@media (max-width: 900px) and (orientation: landscape){
+  :root{
+    --bordSize: min(76vh, 48vw);
+  }
+}
+
+@media (max-width: 520px){
+  #bord .box{
+    font-size: 0.8rem;
+  }
+
+  .box.snake::after,
+  .box.ladder::after{
+    font-size: 0.55rem;
+    padding: 1px 3px;
+  }
 }
 
